@@ -445,11 +445,19 @@ window.logout = function() {
     localStorage.removeItem('companyCode');
     localStorage.removeItem(' faceId');
     
-    // Then handle Firebase signOut
-    const auth = firebase.auth();
-    auth.signOut().then(() => {
+    // Check if Firebase auth is available (Firebase v9+ modular SDK)
+    if (window.auth) {
+        // Use Firebase v9+ modular SDK
+        window.auth.signOut().then(() => {
+            window.location.href = 'login.html';
+        }).catch((error) => {
+            console.error('Error signing out:', error);
+            // Still redirect even if signOut fails
+            window.location.href = 'login.html';
+        });
+    } else {
+        // Fallback: just redirect to login if Firebase auth is not available
+        console.log('Firebase auth not available, redirecting to login');
         window.location.href = 'login.html';
-    }).catch((error) => {
-        console.error('Error signing out:', error);
-    });
+    }
 } 
