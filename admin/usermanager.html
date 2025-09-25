@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+        /* Search filters */
+        .search-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+
+        .search-filters input,
+        .search-filters select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .search-btn:hover {
+            background: #1976D2;
+        }
+
+        .search-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .refresh-btn:hover {
+            background: #f57c00;
+        }
+
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Multi-select styles */
+        .multi-select-container {
+            position: relative;
+        }
+
+        .multi-select-dropdown {
+            position: relative;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .multi-select-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .multi-select-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .multi-select-option.selected {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .selected-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .selected-item {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .selected-item .remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .selected-item .remove:hover {
+            color: #d32f2f;
+        }
+
+        /* Mobile responsive for search filters */
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>User Rights Management</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit User</button>
+            <button class="tab" onclick="switchTab('list')">User List</button>
+        </div>
+
+        <div id="formTab" class="tab-content active">
+            <div class="form-container">
+                <form id="userForm">
+                    <div class="section-title">User Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userName">Name <span class="required">*</span></label>
+                            <input type="text" id="userName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmailField">Email <span class="required">*</span></label>
+                            <input type="email" id="userEmailField" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="userPassword">Password <span class="required">*</span></label>
+                            <input type="password" id="userPassword" placeholder="Enter password for new user" required>
+                            <small style="color: #666; font-size: 12px;">Required for creating new users. Optional when editing (leave blank to keep current password).</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+                            <small style="color: #666; font-size: 12px;">Must match the password above.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userRights">User Rights <span class="required">*</span></label>
+                        <div class="multi-select-container">
+                            <input type="text" id="userRights" placeholder="Selected rights will appear here..." readonly>
+                            <div class="multi-select-dropdown" id="rightsDropdown">
+                                <!-- Rights options will be populated here -->
+                            </div>
+                            <div class="selected-items" id="selectedRights"></div>
+                        </div>
+                        <small style="color: #666; font-size: 12px;">Check the boxes below to select user rights</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save User</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="listTab" class="tab-content">
+            <div class="search-filters">
+                <input type="text" id="searchName" placeholder="Search by name...">
+                <input type="text" id="searchEmail" placeholder="Search by email...">
+                <select id="searchRights">
+                    <option value="">All Rights</option>
+                </select>
+                <button type="button" id="searchBtn" class="search-btn" title="Search">
+                    🔍 Search
+                </button>
+                <button type="button" id="refreshBtn" class="refresh-btn" title="Refresh">
+                    🔄 Refresh
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Rights</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading users...</div>
+            <div id="noMore" class="no-more">No more users to load</div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy, addDoc, updateDoc, deleteDoc, limit as qLimit, startAfter as qStartAfter } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js';
+        import { createUserWithEmailAndPassword, updateProfile, deleteUser as deleteAuthUser, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase with invabrar database
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, 'invabrar');
+        const auth = getAuth(app);
+
+        // Make Firebase objects globally available
+        window.db = db;
+        window.auth = auth;
+        window.collection = collection;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.addDoc = addDoc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.qLimit = qLimit;
+        window.qStartAfter = qStartAfter;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.updateProfile = updateProfile;
+        window.deleteAuthUser = deleteAuthUser;
+        window.updatePassword = updatePassword;
+        
+    </script>
+    
+    <!-- Version Management -->
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+        // Wait for Firebase to be ready
+        const waitForFirebase = () => {
+            return new Promise((resolve) => {
+                const checkFirebase = () => {
+                    if (window.db) {
+                        resolve();
+                    } else {
+                        setTimeout(checkFirebase, 100);
+                    }
+                };
+                checkFirebase();
+            });
+        };
+
+        // Variables for pagination and search
+        let lastVisible = null;
+        let isLoading = false;
+        let hasMore = true;
+        const pageSize = 50;
+        let currentFilters = {
+            name: '',
+            email: '',
+            rights: ''
+        };
+
+        // Available menu pages for rights (matching menu.html)
+        const menuPages = [
+            { id: 'admin', name: 'Admin' },
+            { id: 'dashboard', name: 'Dashboard' },
+            { id: 'unitmaster', name: 'Unit Master' },
+            { id: 'itemmaster', name: 'Item Master' },
+            { id: 'partmaster', name: 'Part Master' },
+            { id: 'receive', name: 'Receive' },
+            { id: 'issue', name: 'Issue' },
+            { id: 'gatepass', name: 'Gate Pass' },
+            { id: 'new-complaint', name: 'New Complaint' },
+            { id: 'settings', name: 'Settings' },
+            { id: 'usermanager', name: 'User Manager' }
+        ];
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load menu first
+            loadMenu();
+            
+            // Ensure menu filtering is applied
+            setTimeout(() => {
+                if (window.ensureMenuLoaded) {
+                    window.ensureMenuLoaded();
+                }
+            }, 500);
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Initialize rights dropdown
+            initializeRightsDropdown();
+            
+            // Add search event listeners
+            setupSearchListeners();
+            
+            // Check for updates
+            if (window.VersionManager) {
+                VersionManager.checkForUpdates();
+            }
+        });
+
+        // Load the menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('menuContainer').innerHTML = html;
+                });
+        }
+
+        // Toggle menu function (fallback)
+        window.toggleMenu = function() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadUsers(true);
+            }
+        }
+
+        // Initialize rights dropdown
+        function initializeRightsDropdown() {
+            const dropdown = document.getElementById('rightsDropdown');
+            const searchRightsSelect = document.getElementById('searchRights');
+            
+            // Clear existing options
+            dropdown.innerHTML = '';
+            searchRightsSelect.innerHTML = '<option value="">All Rights</option>';
+            
+            // Add menu pages as options
+            menuPages.forEach(page => {
+                // Add to dropdown
+                const option = document.createElement('div');
+                option.className = 'multi-select-option';
+                option.innerHTML = `
+                    <input type="checkbox" id="right_${page.id}" value="${page.id}" onchange="toggleRight('${page.id}', '${page.name}')">
+                    <label for="right_${page.id}">${page.name}</label>
+                `;
+                dropdown.appendChild(option);
+                
+                // Add to search filter
+                const searchOption = document.createElement('option');
+                searchOption.value = page.id;
+                searchOption.textContent = page.name;
+                searchRightsSelect.appendChild(searchOption);
+            });
+        }
+
+
+        // Toggle individual right
+        function toggleRight(rightId, rightName) {
+            const checkbox = document.getElementById(`right_${rightId}`);
+            const selectedContainer = document.getElementById('selectedRights');
+            const rightsInput = document.getElementById('userRights');
+            
+            if (checkbox.checked) {
+                // Add to selected items
+                const selectedItem = document.createElement('div');
+                selectedItem.className = 'selected-item';
+                selectedItem.id = `selected_${rightId}`;
+                selectedItem.innerHTML = `
+                    ${rightName}
+                    <span class="remove" onclick="removeRight('${rightId}', '${rightName}')">×</span>
+                `;
+                selectedContainer.appendChild(selectedItem);
+            } else {
+                // Remove from selected items
+                const selectedItem = document.getElementById(`selected_${rightId}`);
+                if (selectedItem) {
+                    selectedItem.remove();
+                }
+            }
+            
+            // Update the comma-separated string
+            updateRightsString();
+        }
+
+        // Remove right from selected items
+        function removeRight(rightId, rightName) {
+            const checkbox = document.getElementById(`right_${rightId}`);
+            const selectedItem = document.getElementById(`selected_${rightId}`);
+            
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+            if (selectedItem) {
+                selectedItem.remove();
+            }
+            
+            updateRightsString();
+        }
+
+        // Update rights string
+        function updateRightsString() {
+            const selectedItems = document.querySelectorAll('.selected-item');
+            const rights = Array.from(selectedItems).map(item => {
+                // Get the ID from the selected item's ID attribute
+                const itemId = item.id.replace('selected_', '');
+                return itemId;
+            });
+            
+            const rightsInput = document.getElementById('userRights');
+            rightsInput.value = rights.join(', ');
+        }
+
+        // Setup search listeners
+        function setupSearchListeners() {
+            // Main search button click
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                // Update current filters from form values
+                currentFilters.name = document.getElementById('searchName').value.toLowerCase();
+                currentFilters.email = document.getElementById('searchEmail').value.toLowerCase();
+                currentFilters.rights = document.getElementById('searchRights').value;
+                
+                // Reset pagination and load users
+                hasMore = true;
+                lastVisible = null;
+                loadUsers(true);
+            });
+
+            // Refresh button click
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Reset all filters to default values
+                currentFilters = {
+                    name: '',
+                    email: '',
+                    rights: ''
+                };
+                
+                // Reset form values
+                document.getElementById('searchName').value = '';
+                document.getElementById('searchEmail').value = '';
+                document.getElementById('searchRights').value = '';
+                
+                // Reset pagination and load users
+                hasMore = true;
+                lastVisible = null;
+                loadUsers(true);
+                
+                showNotification('Filters reset and data refreshed!');
+            });
+        }
+
+        // Load users with pagination and filters
+        async function loadUsers(reset = false) {
+            if (isLoading || (!hasMore && !reset)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('noMore').style.display = 'none';
+                
+                await waitForFirebase();
+                
+                const usersCollection = window.collection(window.db, 'users');
+                let q = window.query(usersCollection, window.qLimit(pageSize));
+
+                if (!reset && lastVisible) {
+                    q = window.query(usersCollection, window.qLimit(pageSize), window.qStartAfter(lastVisible));
+                }
+
+                const snapshot = await window.getDocs(q);
+                
+                
+                if (snapshot.empty) {
+                    hasMore = false;
+                    document.getElementById('noMore').style.display = 'block';
+                    showNotification('No users found in database', 'error');
+                    return;
+                }
+
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                const tbody = document.getElementById('userTable');
+                
+                if (reset) {
+                    tbody.innerHTML = '';
+                }
+
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    
+                    // Apply filters
+                    if (currentFilters.name && !user.name?.toLowerCase().includes(currentFilters.name)) {
+                        return;
+                    }
+                    if (currentFilters.email && !user.email?.toLowerCase().includes(currentFilters.email)) {
+                        return;
+                    }
+                    if (currentFilters.rights && !user.rights?.includes(currentFilters.rights)) {
+                        return;
+                    }
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${user.name || ''}</td>
+                        <td>${user.email || ''}</td>
+                        <td>${user.rights || ''}</td>
+                        <td>${user.createdAt ? user.createdAt.toDate().toLocaleDateString() : ''}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editUser('${doc.id}')" title="Edit">✏️</button>
+                            <button class="action-btn delete-btn" onclick="deleteUser('${doc.id}')" title="Delete">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                showNotification('Error loading users. Please try again.', 'error');
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Edit user
+        async function editUser(docId) {
+            try {
+                const userDocRef = window.doc(window.db, 'users', docId);
+                const userDoc = await window.getDoc(userDocRef);
+                const user = userDoc.data();
+                
+                console.log('Editing user:', user);
+                console.log('User data keys:', Object.keys(user));
+                
+                // Fill the form with user data
+                const nameField = document.getElementById('userName');
+                const emailField = document.getElementById('userEmailField');
+                
+                console.log('Name field found:', nameField);
+                console.log('Email field found:', emailField);
+                
+                if (nameField) {
+                    nameField.value = user.name || '';
+                    console.log('Set name field value to:', nameField.value);
+                }
+                
+                if (emailField) {
+                    emailField.value = user.email || '';
+                    console.log('Set email field value to:', emailField.value);
+                }
+                
+                // Clear password fields when editing (don't populate them)
+                const passwordField = document.getElementById('userPassword');
+                const confirmPasswordField = document.getElementById('confirmPassword');
+                if (passwordField) {
+                    passwordField.value = '';
+                    passwordField.required = false; // Not required for editing
+                    passwordField.placeholder = 'Leave blank to keep current password';
+                }
+                if (confirmPasswordField) {
+                    confirmPasswordField.value = '';
+                    confirmPasswordField.required = false; // Not required for editing
+                    confirmPasswordField.placeholder = 'Leave blank to keep current password';
+                }
+                
+                // Clear existing selections
+                document.querySelectorAll('.multi-select-option input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                document.getElementById('selectedRights').innerHTML = '';
+                document.getElementById('userRights').value = '';
+                
+                // Set rights if they exist
+                if (user.rights) {
+                    console.log('Setting rights:', user.rights);
+                    const rightsArray = user.rights.split(',').map(r => r.trim());
+                    console.log('Rights array:', rightsArray);
+                    
+                    rightsArray.forEach(right => {
+                        // Try to find the page by name first
+                        let page = menuPages.find(p => p.name === right);
+                        
+                        // If not found by name, try by id
+                        if (!page) {
+                            page = menuPages.find(p => p.id === right);
+                        }
+                        
+                        console.log('Looking for right:', right, 'Found page:', page);
+                        
+                        if (page) {
+                            const checkbox = document.getElementById(`right_${page.id}`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                                // Manually add to selected items
+                                const selectedContainer = document.getElementById('selectedRights');
+                                const selectedItem = document.createElement('div');
+                                selectedItem.className = 'selected-item';
+                                selectedItem.id = `selected_${page.id}`;
+                                selectedItem.innerHTML = `
+                                    ${page.name}
+                                    <span class="remove" onclick="removeRight('${page.id}', '${page.name}')">×</span>
+                                `;
+                                selectedContainer.appendChild(selectedItem);
+                            }
+                        }
+                    });
+                    
+                    // Update the rights input field
+                    document.getElementById('userRights').value = user.rights;
+                }
+
+                // Store the document ID for update
+                document.getElementById('userForm').dataset.editId = docId;
+                
+                // Change button text
+                document.getElementById('submitBtn').textContent = 'Update User';
+                
+                // Switch to form tab
+                switchTab('form');
+                
+                console.log('Form populated with user data');
+            } catch (error) {
+                console.error('Error loading user details:', error);
+                showNotification('Error loading user details. Please try again.', 'error');
+            }
+        }
+
+        // Delete user
+        async function deleteUser(docId) {
+            if (!confirm('Are you sure you want to delete this user? This will permanently remove them from both the database and authentication system.')) {
+                return;
+            }
+
+            try {
+                // First get the user data to find Firebase UID
+                const userDocRef = window.doc(window.db, 'users', docId);
+                const userDoc = await window.getDoc(userDocRef);
+                const userData = userDoc.data();
+                
+                // Delete from Firestore first
+                await window.deleteDoc(userDocRef);
+                
+                // Delete from Firebase Authentication if UID exists
+                if (userData.firebaseUID) {
+                    try {
+                        // Note: This requires admin privileges or the user to be signed in
+                        // For now, we'll just delete from Firestore and show a note
+                        console.log('User deleted from Firestore. Firebase Auth deletion requires admin SDK.');
+                        showNotification('User deleted from database. Note: Firebase Authentication user may still exist (requires admin privileges to delete).', 'success');
+                    } catch (authError) {
+                        console.error('Error deleting from Firebase Auth:', authError);
+                        showNotification('User deleted from database, but could not delete from Firebase Authentication.', 'error');
+                    }
+                } else {
+                    showNotification('User deleted successfully!');
+                }
+                
+                loadUsers(true);
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showNotification('Error deleting user. Please try again.', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('userForm').reset();
+            
+            // Clear rights selections
+            document.querySelectorAll('.multi-select-option input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('selectedRights').innerHTML = '';
+            document.getElementById('userRights').value = '';
+            
+            // Reset password fields to required for new users
+            const passwordField = document.getElementById('userPassword');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            if (passwordField) {
+                passwordField.required = true;
+            }
+            if (confirmPasswordField) {
+                confirmPasswordField.required = true;
+            }
+            
+            // Reset button text and remove edit ID
+            document.getElementById('submitBtn').textContent = 'Save User';
+            delete document.getElementById('userForm').dataset.editId;
+        }
+
+
+
+        // Form submission
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = localStorage.getItem('userId');
+            const selectedRights = document.getElementById('userRights').value;
+            const password = document.getElementById('userPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('userEmailField').value;
+            const name = document.getElementById('userName').value;
+
+            // Validate password confirmation for new users
+            const editId = this.dataset.editId;
+            if (!editId && password !== confirmPassword) {
+                showNotification('Passwords do not match!', 'error');
+                return;
+            }
+
+            if (!editId && password.length < 6) {
+                showNotification('Password must be at least 6 characters long!', 'error');
+                return;
+            }
+
+            const userData = {
+                name: name,
+                email: email,
+                rights: selectedRights,
+                updatedAt: new Date()
+            };
+
+            try {
+                if (editId) {
+                    // Update existing user
+                    const userDocRef = window.doc(window.db, 'users', editId);
+                    
+                    // Check if password is provided for update
+                    if (password && password.trim() !== '') {
+                        // Validate password for updates
+                        if (password !== confirmPassword) {
+                            showNotification('Passwords do not match!', 'error');
+                            return;
+                        }
+                        if (password.length < 6) {
+                            showNotification('Password must be at least 6 characters long!', 'error');
+                            return;
+                        }
+                        
+                        // Get user data to find Firebase UID
+                        const userDoc = await window.getDoc(userDocRef);
+                        const existingUserData = userDoc.data();
+                        
+                        if (existingUserData.firebaseUID) {
+                            // Note: Updating password requires admin privileges or user to be signed in
+                            // For now, we'll show a note about this limitation
+                            console.log('Password update requires admin privileges or user to be signed in');
+                            showNotification('User data updated. Note: Password update requires admin privileges or user to be signed in.', 'success');
+                        } else {
+                            showNotification('User data updated. Note: No Firebase Authentication user found for password update.', 'success');
+                        }
+                    }
+                    
+                    await window.updateDoc(userDocRef, userData);
+                    showNotification('User updated successfully!');
+                } else {
+                    // Create new Firebase Authentication user
+                    await waitForFirebase();
+                    
+                    // Create user in Firebase Authentication
+                    const userCredential = await window.createUserWithEmailAndPassword(window.auth, email, password);
+                    const firebaseUser = userCredential.user;
+                    
+                    // Update the user's display name
+                    await window.updateProfile(firebaseUser, {
+                        displayName: name
+                    });
+                    
+                    // Save user data to Firestore
+                    userData.createdBy = userId;
+                    userData.createdAt = new Date();
+                    userData.firebaseUID = firebaseUser.uid; // Store Firebase UID for reference
+                    
+                    const usersCollection = window.collection(window.db, 'users');
+                    await window.addDoc(usersCollection, userData);
+                    
+                    showNotification('User created successfully in Firebase Authentication!');
+                }
+
+                resetForm();
+                if (editId) {
+                    loadUsers(true); // Refresh the list if editing
+                }
+            } catch (error) {
+                console.error('Error creating/updating user:', error);
+                let errorMessage = 'Error submitting user. Please try again.';
+                
+                // Handle specific Firebase Auth errors
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Email is already registered!';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address!';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak!';
+                }
+                
+                showNotification(errorMessage, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

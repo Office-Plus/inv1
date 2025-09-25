@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part Master</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        /* Search filters */
+        .search-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+
+        .search-filters input,
+        .search-filters select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .search-btn:hover {
+            background: #1976D2;
+        }
+
+        .search-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .refresh-btn:hover {
+            background: #f57c00;
+        }
+
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .download-excel-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .download-excel-btn:hover {
+            background: #218838;
+        }
+
+        .download-excel-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Mobile responsive for search filters */
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1400px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1401px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>Part Master</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit Party</button>
+            <button class="tab" onclick="switchTab('list')">Party List</button>
+        </div>
+
+        <div id="formTab" class="tab-content active">
+            <div class="form-container">
+                <form id="partyForm">
+                    <!-- Party Information Section -->
+                    <div class="section-title">Party Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="partyName">Party Name <span class="required">*</span></label>
+                            <input type="text" id="partyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="partyId">Party ID</label>
+                            <input type="text" id="partyId" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address <span class="required">*</span></label>
+                        <textarea id="address" placeholder="Enter complete address..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contactPerson">Contact Person <span class="required">*</span></label>
+                            <input type="text" id="contactPerson" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phoneNumber" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="partyType">Party Type <span class="required">*</span></label>
+                            <select id="partyType" required>
+                                <option value="">Select Party Type</option>
+                                <option value="MECHANICAL">MECHANICAL</option>
+                                <option value="ELECTRICAL">ELECTRICAL</option>
+                                <option value="CONSUMABLE">CONSUMABLE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Party</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="listTab" class="tab-content">
+            <div class="search-filters">
+                <input type="text" id="searchPartyName" placeholder="Search by party name...">
+                <input type="text" id="searchPartyId" placeholder="Search by party ID...">
+                <input type="text" id="searchContactPerson" placeholder="Search by contact person...">
+                <input type="text" id="searchPhoneNumber" placeholder="Search by phone number...">
+                <input type="text" id="searchAddress" placeholder="Search by address...">
+                <select id="searchPartyType">
+                    <option value="">All Party Types</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                    <option value="ELECTRICAL">ELECTRICAL</option>
+                    <option value="CONSUMABLE">CONSUMABLE</option>
+                </select>
+                <button type="button" id="searchBtn" class="search-btn" title="Search">
+                    🔍 Search
+                </button>
+                <button type="button" id="refreshBtn" class="refresh-btn" title="Refresh">
+                    🔄 Refresh
+                </button>
+                <button type="button" id="downloadExcelBtn" class="download-excel-btn" title="Download Excel">
+                    📊 Download Excel
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Party ID</th>
+                        <th>Party Name</th>
+                        <th>Contact Person</th>
+                        <th>Phone Number</th>
+                        <th>Party Type</th>
+                        <th>Address</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="partyTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading parties...</div>
+            <div id="noMore" class="no-more">No more parties to load</div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Firebase SDKs will be loaded via ES modules in the script below -->
+    
+    <!-- Add XLSX library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Version Management -->
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy, addDoc, updateDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js';
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, 'invabrar');
+        const auth = getAuth(app);
+
+        function getDatabaseName() {
+            try {
+                return db && db._databaseId && db._databaseId.database ? db._databaseId.database : '(default)';
+            } catch (e) { return '(unknown)'; }
+        }
+        console.log('[PartyMaster] Using Firestore database:', getDatabaseName());
+
+        // Load the menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('menuContainer').innerHTML = html;
+                });
+        }
+
+        // Variables for search
+        let currentFilters = {
+            partyName: '',
+            partyId: '',
+            contactPerson: '',
+            phoneNumber: '',
+            address: '',
+            partyType: ''
+        };
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load menu first
+            loadMenu();
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Load parties
+            loadParties();
+            
+            // Setup search listeners
+            setupSearchListeners();
+            
+            // Check for updates
+            if (window.VersionManager) {
+                VersionManager.checkForUpdates();
+            }
+        });
+
+        // Toggle menu function (fallback)
+        window.toggleMenu = function() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Switch tabs (exposed globally for inline handlers)
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadParties();
+            }
+        }
+
+        // Generate party ID (similar to unitmaster pattern)
+        async function generatePartyId() {
+            const partyName = document.getElementById('partyName').value;
+            if (!partyName) {
+                return '';
+            }
+            
+            // Generate ID from party name (first 3 characters + random 2 digits)
+            const prefix = partyName.substring(0, 3).toUpperCase();
+            let partyId;
+            let isUnique = false;
+            let attempts = 0;
+            const maxAttempts = 100; // Prevent infinite loop
+            
+            while (!isUnique && attempts < maxAttempts) {
+                const randomDigits = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+                partyId = `${prefix}${randomDigits}`;
+                
+                try {
+                    // Check if party ID already exists
+                    const qCheck = query(collection(db, 'partymaster'), where('partyId', '==', partyId));
+                    const snapshot = await getDocs(qCheck);
+                    
+                    if (snapshot.empty) {
+                        isUnique = true;
+                    } else {
+                        attempts++;
+                    }
+                } catch (error) {
+                    console.error('Error checking party ID uniqueness:', error);
+                    // If there's an error checking, use the generated ID anyway
+                    isUnique = true;
+                }
+            }
+            
+            if (attempts >= maxAttempts) {
+                // If we couldn't find a unique ID after max attempts, add timestamp
+                const timestamp = Date.now().toString().slice(-4);
+                partyId = `${prefix}${timestamp}`;
+            }
+            
+            return partyId;
+        }
+
+        // Setup search listeners
+        function setupSearchListeners() {
+            // Main search button click
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                // Update current filters from form values
+                currentFilters.partyName = document.getElementById('searchPartyName').value.toLowerCase();
+                currentFilters.partyId = document.getElementById('searchPartyId').value.toLowerCase();
+                currentFilters.contactPerson = document.getElementById('searchContactPerson').value.toLowerCase();
+                currentFilters.phoneNumber = document.getElementById('searchPhoneNumber').value.toLowerCase();
+                currentFilters.address = document.getElementById('searchAddress').value.toLowerCase();
+                currentFilters.partyType = document.getElementById('searchPartyType').value;
+                
+                // Load parties with filters
+                loadParties();
+            });
+
+            // Refresh button click
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Reset all filters to default values
+                currentFilters = {
+                    partyName: '',
+                    partyId: '',
+                    contactPerson: '',
+                    phoneNumber: '',
+                    address: '',
+                    partyType: ''
+                };
+                
+                // Reset form values
+                document.getElementById('searchPartyName').value = '';
+                document.getElementById('searchPartyId').value = '';
+                document.getElementById('searchContactPerson').value = '';
+                document.getElementById('searchPhoneNumber').value = '';
+                document.getElementById('searchAddress').value = '';
+                document.getElementById('searchPartyType').value = '';
+                
+                // Load parties
+                loadParties();
+                
+                showNotification('Filters reset and data refreshed!');
+            });
+
+            // Download Excel button
+            document.getElementById('downloadExcelBtn').addEventListener('click', function() {
+                downloadExcelData();
+            });
+        }
+
+        // Load parties
+        async function loadParties() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                
+                // Read from database 'invabrar' → collection 'partymaster'
+                const qParties = query(collection(db, 'partymaster'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(qParties);
+
+                const tbody = document.getElementById('partyTable');
+                tbody.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No parties found</td></tr>';
+                } else {
+                    let filteredParties = [];
+                    
+                    snapshot.forEach(docSnap => {
+                        const party = docSnap.data();
+                        party.id = docSnap.id;
+                        
+                        // Apply filters
+                        let matches = true;
+                        
+                        if (currentFilters.partyName && !party.partyName.toLowerCase().includes(currentFilters.partyName)) {
+                            matches = false;
+                        }
+                        
+                        if (currentFilters.partyId && !party.partyId.toLowerCase().includes(currentFilters.partyId)) {
+                            matches = false;
+                        }
+                        
+                        if (currentFilters.contactPerson && !party.contactPerson.toLowerCase().includes(currentFilters.contactPerson)) {
+                            matches = false;
+                        }
+                        
+                        if (currentFilters.phoneNumber && !party.phoneNumber.toLowerCase().includes(currentFilters.phoneNumber)) {
+                            matches = false;
+                        }
+                        
+                        if (currentFilters.address && !party.address.toLowerCase().includes(currentFilters.address)) {
+                            matches = false;
+                        }
+                        
+                        if (currentFilters.partyType && party.partyType !== currentFilters.partyType) {
+                            matches = false;
+                        }
+                        
+                        if (matches) {
+                            filteredParties.push(party);
+                        }
+                    });
+                    
+                    if (filteredParties.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No parties match the search criteria</td></tr>';
+                    } else {
+                        filteredParties.forEach(party => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${party.partyId || ''}</td>
+                                <td>${party.partyName || ''}</td>
+                                <td>${party.contactPerson || ''}</td>
+                                <td>${party.phoneNumber || ''}</td>
+                                <td>${party.partyType || ''}</td>
+                                <td>${party.address || ''}</td>
+                                <td>${party.createdAt ? party.createdAt.toDate().toLocaleDateString() : ''}</td>
+                                <td>
+                                    <button class="action-btn edit-btn" onclick="editParty('${party.id}')" title="Edit">✏️</button>
+                                    <button class="action-btn delete-btn" onclick="deleteParty('${party.id}')" title="Delete">🗑️</button>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading parties:', error);
+                showNotification('Error loading parties. Please try again.', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Edit party
+        window.editParty = async function(docId) {
+            try {
+                const docRef = doc(db, 'partymaster', docId);
+                const docSnap = await getDoc(docRef);
+
+                const party = docSnap.data();
+                
+                // Fill the form with party data
+                document.getElementById('partyName').value = party.partyName || '';
+                document.getElementById('partyId').value = party.partyId || '';
+                document.getElementById('address').value = party.address || '';
+                document.getElementById('contactPerson').value = party.contactPerson || '';
+                document.getElementById('phoneNumber').value = party.phoneNumber || '';
+                document.getElementById('partyType').value = party.partyType || '';
+
+                // Store the document ID for update
+                document.getElementById('partyForm').dataset.editId = docId;
+                
+                // Change button text
+                document.getElementById('submitBtn').textContent = 'Update Party';
+                
+                // Switch to form tab
+                window.switchTab('form');
+            } catch (error) {
+                console.error('Error loading party:', error);
+                showNotification('Error loading party details. Please try again.', 'error');
+            }
+        }
+
+        // Delete party
+        window.deleteParty = async function(docId) {
+            if (!confirm('Are you sure you want to delete this party?')) {
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'partymaster', docId);
+                console.log(`[PartyMaster] DELETE → database: '${getDatabaseName()}', path: '${docRef.path}'`);
+                await deleteDoc(docRef);
+
+                showNotification('Party deleted successfully!');
+                loadParties();
+            } catch (error) {
+                console.error('Error deleting party:', error);
+                showNotification('Error deleting party. Please try again.', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Download Excel data function
+        async function downloadExcelData() {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+                showNotification('Excel library not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+
+            const downloadBtn = document.getElementById('downloadExcelBtn');
+            const originalText = downloadBtn.textContent;
+            
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = '⏳ Loading...';
+                
+                // Get all parties
+                const snapshot = await db.collection('invabrar')
+                    .doc('partmaster')
+                    .collection('parties')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                if (snapshot.empty) {
+                    showNotification('No data found for download.', 'error');
+                    return;
+                }
+
+                console.log(`Found ${snapshot.size} records for Excel download`);
+
+                // Prepare data for Excel
+                const excelData = [];
+                const headers = [
+                    'Party ID', 'Party Name', 'Contact Person', 'Phone Number', 'Party Type', 'Address', 'Created Date'
+                ];
+                excelData.push(headers);
+
+                snapshot.forEach(doc => {
+                    const party = doc.data();
+                    const row = [
+                        party.partyId || '',
+                        party.partyName || '',
+                        party.contactPerson || '',
+                        party.phoneNumber || '',
+                        party.partyType || '',
+                        party.address || '',
+                        party.createdAt ? party.createdAt.toDate().toLocaleDateString() : ''
+                    ];
+                    excelData.push(row);
+                });
+
+                // Generate Excel file
+                const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Parties');
+
+                // Auto-size columns
+                const columnWidths = headers.map(header => ({ wch: Math.max(header.length, 15) }));
+                worksheet['!cols'] = columnWidths;
+
+                // Generate filename
+                const filename = `parties_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+                // Download the file
+                XLSX.writeFile(workbook, filename);
+                showNotification(`Excel file downloaded successfully! (${snapshot.size} records)`);
+
+            } catch (error) {
+                console.error('Error downloading Excel:', error);
+                showNotification('Error downloading Excel file. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = originalText;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('partyName').addEventListener('input', async function() {
+            const partyId = await generatePartyId();
+            document.getElementById('partyId').value = partyId;
+        });
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('partyForm').reset();
+            document.getElementById('partyId').value = '';
+            
+            // Reset button text and remove edit ID
+            document.getElementById('submitBtn').textContent = 'Save Party';
+            delete document.getElementById('partyForm').dataset.editId;
+        }
+
+        // Form submission
+        document.getElementById('partyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = localStorage.getItem('userId');
+
+            const partyData = {
+                partyName: document.getElementById('partyName').value,
+                partyId: document.getElementById('partyId').value,
+                address: document.getElementById('address').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                partyType: document.getElementById('partyType').value,
+                updatedAt: new Date()
+            };
+
+            try {
+                const editId = this.dataset.editId;
+                if (editId) {
+                    // Update existing party
+                    const docRef = doc(db, 'partymaster', editId);
+                    console.log(`[PartyMaster] UPDATE → database: '${getDatabaseName()}', path: '${docRef.path}'`);
+                    await updateDoc(docRef, partyData);
+                    showNotification('Party updated successfully!');
+                } else {
+                    // Create new party - ensure party ID is unique
+                    // Use current partyId unless it already exists
+                    let finalPartyId = (document.getElementById('partyId').value || '').trim();
+                    if (finalPartyId) {
+                        const qCheck = query(collection(db, 'partymaster'), where('partyId', '==', finalPartyId));
+                        const snapCheck = await getDocs(qCheck);
+                        if (!snapCheck.empty) {
+                            finalPartyId = await generatePartyId();
+                        }
+                    } else {
+                        finalPartyId = await generatePartyId();
+                    }
+                    partyData.partyId = finalPartyId;
+                    partyData.createdBy = userId;
+                    partyData.createdAt = new Date();
+                    const colRef = collection(db, 'partymaster');
+                    console.log(`[PartyMaster] ADD → database: '${getDatabaseName()}', path: '${colRef.path}', partyId: '${partyData.partyId}'`);
+                    await addDoc(colRef, partyData);
+                    showNotification('Party saved successfully!');
+                }
+
+                resetForm();
+                loadParties();
+            } catch (error) {
+                console.error('Error saving party:', error);
+                showNotification('Error saving party. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

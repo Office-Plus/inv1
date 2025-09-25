@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDIBULL Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .btn.update {
+            background-color: #2196F3;
+        }
+
+        .btn.update:hover {
+            background-color: #1976D2;
+        }
+
+        .btn.delete {
+            background-color: #f44336;
+        }
+
+        .btn.delete:hover {
+            background-color: #d32f2f;
+        }
+
+        .version {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        /* Tabs styling */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+
+
+
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .notification .timer {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+        }
+
+        .notification .timer-bar {
+            height: 100%;
+            background: white;
+            width: 100%;
+            transition: width 2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <!-- Include the shared menu -->
+    <div id="menuContainer"></div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('settings')">Settings</button>
+        </div>
+
+        <div id="settingsTab" class="tab-content active">
+            <div class="card">
+                <h1>Settings</h1>
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="companyCode">Company Code</label>
+                        <input type="text" id="companyCode" required>
+                    </div>
+                    <button type="submit" class="btn" id="submitBtn">Save</button>
+                </form>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <div class="version">(Version 0.0.4)</div>
+
+    <!-- Notification element -->
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+        <div class="timer">
+            <div class="timer-bar"></div>
+        </div>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+        // Define switchTab function in the global scope
+        window.switchTab = function(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate the selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        }
+
+        // Toggle menu function - added to fix menu toggle issue
+        function toggleMenu() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        }
+
+        // Load the menu
+        fetch('menu.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('menuContainer').innerHTML = html;
+            });
+
+        // Check authentication - use existing userEmail from menu.js
+        const userId = localStorage.getItem('userId');
+        
+        if (!userEmail || !userId) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Helper function to get normalized company code
+        async function getNormalizedCompanyCode(companyCode) {
+            // Remove all spaces and convert to uppercase
+            const normalizedCompanyCode = companyCode.toUpperCase().replace(/\s+/g, '');
+            
+            // For now, just return the normalized company code
+            // We'll handle company code validation differently if needed
+            return normalizedCompanyCode;
+        }
+
+        // Helper function to find existing user with Admin level
+        async function findExistingAdminUser() {
+            try {
+                console.log('Searching for existing Admin user...');
+                
+                // Get all company collections
+                const cmpltsDoc = db.collection('complaints').doc('cmplts');
+                const companyCollections = await cmpltsDoc.listCollections();
+                
+                for (const companyCollection of companyCollections) {
+                    const companyCode = companyCollection.id;
+                    console.log(`Checking company: ${companyCode}`);
+                    
+                    try {
+                        const usersCollection = companyCollection.doc('masters').collection('users');
+                        const usersSnapshot = await usersCollection.get();
+                        
+                        for (const userDoc of usersSnapshot.docs) {
+                            const userData = userDoc.data();
+                            if (userData.email === userEmail && userData.userlevel === 'Admin') {
+                                console.log(`Found Admin user in company ${companyCode}:`, userData);
+                                return { companyCode, userData };
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`Error checking company ${companyCode}:`, error);
+                    }
+                }
+                
+                console.log('No Admin user found');
+                return null;
+            } catch (error) {
+                console.log('Error searching for Admin user:', error);
+                return null;
+            }
+        }
+
+        // Clear any existing value first to prevent showing cached/default values
+        document.getElementById('companyCode').value = '';
+        
+        // Load existing company code from localStorage only
+        const storedCompanyCode = localStorage.getItem('companyCode');
+        if (storedCompanyCode && storedCompanyCode.trim() !== '') {
+            document.getElementById('companyCode').value = storedCompanyCode;
+            document.getElementById('submitBtn').textContent = 'Update';
+            document.getElementById('submitBtn').classList.add('update');
+        } else {
+            // Clear localStorage if it contains empty/invalid value
+            if (storedCompanyCode === '') {
+                localStorage.removeItem('companyCode');
+            }
+            // Field will remain empty for user to enter company code
+        }
+
+        // Handle settings form submission
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const companyCode = document.getElementById('companyCode').value;
+
+            if (!companyCode.trim()) {
+                showNotification('Please enter a company code.', 'error');
+                return;
+            }
+
+            try {
+                // Get normalized company code
+                const finalCompanyCode = await getNormalizedCompanyCode(companyCode);
+                const normalizedCompanyCode = finalCompanyCode.toUpperCase().replace(/\s+/g, '');
+                
+                // First, try to fetch existing user data to preserve userlevel and userRights
+                let existingUserData = {};
+                
+                // Try to find existing user by email field using where condition
+                try {
+                    const usersCollection = db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(finalCompanyCode)
+                        .doc('masters')
+                        .collection('users');
+                    
+                    console.log('Searching for user with email:', userEmail, 'in company:', finalCompanyCode);
+                    
+                    // Query by email field
+                    const userQuery = await usersCollection.where('email', '==', userEmail).get();
+                    
+                    if (!userQuery.empty) {
+                        const userDoc = userQuery.docs[0]; // Get the first matching document
+                        existingUserData = userDoc.data();
+                        console.log('Found existing user data by email query:', existingUserData);
+                        console.log('User document ID:', userDoc.id);
+                    } else {
+                        console.log('No existing user found with email:', userEmail, 'in company:', finalCompanyCode);
+                        
+                        // Fallback: Try to find Admin user in any company
+                        const adminUser = await findExistingAdminUser();
+                        if (adminUser) {
+                            existingUserData = adminUser.userData;
+                            console.log('Using existing Admin user data from different company:', existingUserData);
+                        }
+                    }
+                } catch (fetchError) {
+                    console.log('Error fetching existing user data:', fetchError);
+                    console.log('No existing user data found, will create new user');
+                }
+                
+                // Prepare the data to save, preserving existing userlevel and userRights
+                const dataToSave = {
+                    companyCode: companyCode, // Keep original case for display
+                    normalizedCompanyCode: normalizedCompanyCode, // Store normalized version
+                    email: userEmail,
+                    userlevel: existingUserData.userlevel || 'user', // Preserve existing or set default
+                    userRights: existingUserData.userRights || [], // Preserve existing or set default
+                    lastUpdated: new Date()
+                };
+                
+                console.log('Data to save:', dataToSave);
+                
+                // Determine the document ID to use - either existing document ID or create new one
+                let documentIdToUse = null;
+                
+                // If we found an existing user, use that document ID
+                if (existingUserData.email === userEmail) {
+                    // Get the document ID from the query result
+                    const usersCollection = db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(finalCompanyCode)
+                        .doc('masters')
+                        .collection('users');
+                    
+                    const userQuery = await usersCollection.where('email', '==', userEmail).get();
+                    if (!userQuery.empty) {
+                        documentIdToUse = userQuery.docs[0].id;
+                        console.log('Using existing document ID:', documentIdToUse);
+                    }
+                }
+                
+                // If no existing document found, create a new one with auto-generated ID
+                if (!documentIdToUse) {
+                    console.log('Creating new user document with auto-generated ID');
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(finalCompanyCode)
+                        .doc('masters')
+                        .collection('users')
+                        .add(dataToSave);
+                } else {
+                    // Update existing document
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(finalCompanyCode)
+                        .doc('masters')
+                        .collection('users')
+                        .doc(documentIdToUse)
+                        .set(dataToSave, { merge: true });
+                }
+
+                // Save all data to localStorage
+                localStorage.setItem('companyCode', companyCode);
+                localStorage.setItem('normalizedCompanyCode', normalizedCompanyCode);
+                localStorage.setItem('userlevel', dataToSave.userlevel);
+                localStorage.setItem('userRights', dataToSave.userRights.join(','));
+                
+                // Debug logging for all saved data
+                console.log('All data saved to localStorage:', {
+                    companyCode: companyCode,
+                    normalizedCompanyCode: normalizedCompanyCode,
+                    userlevel: dataToSave.userlevel,
+                    userRights: dataToSave.userRights.join(',')
+                });
+                
+                showNotification('Settings saved successfully!', 'success');
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 500);
+
+                // Update button text
+                document.getElementById('submitBtn').textContent = 'Update';
+                document.getElementById('submitBtn').classList.add('update');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showNotification('Error saving settings. Please try again.', 'error');
+            }
+        });
+
+        // Add event listener to clear field when user starts typing
+        document.getElementById('companyCode').addEventListener('input', function() {
+            // If user is typing and the field was previously empty, change button text
+            if (this.value.trim() !== '') {
+                document.getElementById('submitBtn').textContent = 'Save';
+                document.getElementById('submitBtn').classList.remove('update');
+            } else {
+                document.getElementById('submitBtn').textContent = 'Save';
+                document.getElementById('submitBtn').classList.remove('update');
+            }
+        });
+
+
+
+
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            const timerBar = notification.querySelector('.timer-bar');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Reset timer bar
+            timerBar.style.width = '100%';
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 2 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+
+    </script>
+</body>
+</html> 

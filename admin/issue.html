@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .btn-image {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-image:hover {
+            background-color: #45a049;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+        /* Search filters */
+        .search-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+
+        .search-filters input,
+        .search-filters select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .search-btn:hover {
+            background: #1976D2;
+        }
+
+        .search-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .refresh-btn:hover {
+            background: #f57c00;
+        }
+
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .download-excel-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .download-excel-btn:hover {
+            background: #218838;
+        }
+
+        .download-excel-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Mobile responsive for search filters */
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1400px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1401px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                gap: 15px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        /* Image preview */
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Searchable dropdown */
+        .searchable-dropdown {
+            position: relative;
+        }
+
+        .searchable-dropdown input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Image modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-camera {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-gallery {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Global right-side search panel */
+        .right-search-panel {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            bottom: 0;
+            width: min(520px, 45vw);
+            background: #f0f0f0;
+            border-left: 1px solid #ddd;
+            box-shadow: -2px 0 6px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            display: none;
+            z-index: 1500;
+        }
+        .right-search-panel.show { display: block; }
+        .right-search-header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 10px 12px; font-weight: bold; color: #333; border-bottom: 1px solid #ddd; background: #fafafa; position: sticky; top: 0; }
+        .right-search-meta { font-weight: normal; color:#555; font-size: 12px; }
+        .right-search-actions { display:flex; align-items:center; gap:8px; }
+        .refresh-btn-inline { cursor:pointer; border:none; background:#eee; padding:4px 8px; border-radius:4px; }
+        .refresh-btn-inline:hover { background:#e0e0e0; }
+        .right-search-hint { font-weight: normal; color:#8a6d3b; background:#fff3cd; border:1px solid #ffeeba; padding:4px 8px; border-radius:4px; margin-left:auto; }
+        .right-search-list { list-style: none; margin: 0; padding: 0; }
+        .right-search-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #e6e6e6; outline: none; }
+        .right-search-item:hover, .right-search-item:focus { background: #e7e7e7; }
+        .right-search-item.active { background: #fff3cd; }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>Issue</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit Issue</button>
+            <button class="tab" onclick="switchTab('list')">Issue List</button>
+        </div>
+
+        <div id="formTab" class="tab-content active">
+            <div class="form-container">
+                <form id="issueForm">
+                    <input type="hidden" id="partyDocId">
+                    <input type="hidden" id="partyCodeHidden">
+                    <input type="hidden" id="itemDocId">
+                    <input type="hidden" id="itemIdHidden">
+                    <!-- Issue Information Section -->
+                    <div class="section-title">Issue Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="issueDate">Date of Issue <span class="required">*</span></label>
+                            <input type="date" id="issueDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="partyName">Party Name <span class="required">*</span></label>
+                            <div class="searchable-dropdown">
+                                <input type="text" id="partyName" placeholder="Search and select party..." required>
+                                <div class="dropdown-list" id="partyDropdown"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemName">Item Name <span class="required">*</span></label>
+                            <div class="searchable-dropdown">
+                                <input type="text" id="itemName" placeholder="Search and select item..." required>
+                                <div class="dropdown-list" id="itemDropdown"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemCode">Item Code</label>
+                            <input type="text" id="itemCode" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="quantity">Quantity <span class="required">*</span></label>
+                            <input type="number" id="quantity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueType">Issue Type <span class="required">*</span></label>
+                            <select id="issueType" required>
+                                <option value="">Select Issue Type</option>
+                                <option value="MECHANICAL">MECHANICAL</option>
+                                <option value="ELECTRICAL">ELECTRICAL</option>
+                                <option value="CONSUMABLE">CONSUMABLE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="partyId">Party ID</label>
+                            <input type="text" id="partyId" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="imageUpload">Issue Image</label>
+                            <button type="button" class="btn btn-image" onclick="openImageModal()">
+                                📷 Capture/Select Image
+                            </button>
+                            <div class="image-preview" id="imagePreview">
+                                <img id="previewImg" src="" alt="Preview">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Issue Description <span class="required">*</span></label>
+                        <textarea id="description" placeholder="Please describe the issue in detail..." required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Issue</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="listTab" class="tab-content">
+            <div class="search-filters">
+                <input type="date" id="searchIssueDate" placeholder="Search by issue date...">
+                <input type="text" id="searchPartyName" placeholder="Search by party name...">
+                <input type="text" id="searchPartyId" placeholder="Search by party ID...">
+                <select id="searchIssueType">
+                    <option value="">All Issue Types</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                    <option value="ELECTRICAL">ELECTRICAL</option>
+                    <option value="CONSUMABLE">CONSUMABLE</option>
+                </select>
+                <input type="date" id="searchFromDate" placeholder="From Date">
+                <input type="date" id="searchToDate" placeholder="To Date">
+                <button type="button" id="searchBtn" class="search-btn" title="Search">
+                    🔍 Search
+                </button>
+                <button type="button" id="refreshBtn" class="refresh-btn" title="Refresh">
+                    🔄 Refresh
+                </button>
+                <button type="button" id="downloadExcelBtn" class="download-excel-btn" title="Download Excel">
+                    📊 Download Excel
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Issue Date</th>
+                        <th>Party Name</th>
+                        <th>Party ID</th>
+                        <th>Item Name</th>
+                        <th>Item Code</th>
+                        <th>Quantity</th>
+                        <th>Issue Type</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="issueTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading issues...</div>
+            <div id="noMore" class="no-more">No more issues to load</div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <div class="modal-content">
+            <h3>Select Image Source</h3>
+            <p>Choose how you want to add an image:</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-camera" onclick="captureImage()">📷 Camera</button>
+                <button class="btn-modal btn-gallery" onclick="selectFromGallery()">🖼️ Gallery</button>
+                <button class="btn-modal btn-cancel" onclick="closeImageModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Right-side search panel -->
+    <div id="searchPanel" class="right-search-panel" tabindex="-1">
+        <div id="searchPanelHeader" class="right-search-header">
+            <span id="searchPanelTitle"></span>
+            <span id="searchPanelMeta" class="right-search-meta"></span>
+            <button id="searchPanelRefresh" class="refresh-btn-inline" title="Refresh">🔄 Refresh</button>
+            <span id="searchPanelHint" class="right-search-hint" style="display:none;"></span>
+        </div>
+        <ul id="searchPanelList" class="right-search-list"></ul>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy, addDoc, updateDoc, deleteDoc, limit as qLimit, startAfter as qStartAfter } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js';
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js';
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, 'invabrar');
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        // Make Firebase objects globally available
+        window.db = db;
+        window.auth = auth;
+        window.storage = storage;
+        window.collection = collection;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.addDoc = addDoc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.qLimit = qLimit;
+        window.qStartAfter = qStartAfter;
+        window.storageRef = storageRef;
+        window.uploadBytes = uploadBytes;
+        window.getDownloadURL = getDownloadURL;
+        window.deleteObject = deleteObject;
+    </script>
+    
+    <!-- Add XLSX library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Version Management -->
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+
+        // Load the menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('menuContainer').innerHTML = html;
+                });
+        }
+
+        // Variables for pagination and search
+        let lastVisible = null;
+        let isLoading = false;
+        let hasMore = true;
+        const pageSize = 50;
+        let currentFilters = {
+            issueDate: '',
+            partyName: '',
+            partyId: '',
+            issueType: '',
+            fromDate: '',
+            toDate: ''
+        };
+        let partiesArray = [];
+        let partyArray = []; // Alias for compatibility
+        let itemsArray = [];
+        let selectedImageFile = null;
+
+        // Cache functions
+        function getCache(key) {
+            try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch { return null; }
+        }
+        function setCache(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+        }
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load menu first
+            loadMenu();
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Set default date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('issueDate').value = today;
+            
+            // Load parties for dropdown
+            await loadPartiesForDropdown();
+            
+            // Load items for dropdown
+            await loadItemsForDropdown();
+            
+            // Setup search listeners
+            setupSearchListeners();
+            
+            // Check for updates
+            if (window.VersionManager) {
+                VersionManager.checkForUpdates();
+            }
+        });
+
+        // Toggle menu function (fallback)
+        window.toggleMenu = function() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadIssues(true);
+            }
+        }
+
+        // Load parties from partmaster for dropdown
+        async function loadPartiesForDropdown() {
+            // Try cache first
+            const cache = getCache('cache_partymaster');
+            if (cache && Array.isArray(cache.items)) {
+                partiesArray = cache.items;
+                partyArray = cache.items;
+            }
+            try {
+                const qParties = query(collection(db, 'partymaster'), orderBy('partyName'));
+                const snapshot = await getDocs(qParties);
+
+                partiesArray = [];
+                partyArray = [];
+                snapshot.forEach(doc => {
+                    const party = doc.data();
+                    const partyObj = {
+                        id: doc.id,
+                        partyName: party.partyName,
+                        partyId: party.partyId,
+                        address: party.address,
+                        contactPerson: party.contactPerson,
+                        phoneNumber: party.phoneNumber,
+                        partyType: party.partyType
+                    };
+                    partiesArray.push(partyObj);
+                    partyArray.push(partyObj);
+                });
+                setCache('cache_partymaster', { lastFetched: Date.now(), items: partiesArray });
+                console.log('Loaded parties:', partiesArray.length);
+            } catch (error) {
+                console.error('Error loading parties:', error);
+            }
+        }
+
+        // Load items from itemmaster for dropdown
+        async function loadItemsForDropdown() {
+            // Try cache first
+            const cache = getCache('cache_itemmaster');
+            if (cache && Array.isArray(cache.items)) {
+                itemsArray = cache.items;
+            }
+            try {
+                const qItems = query(collection(db, 'itemmaster'), orderBy('itemName'));
+                const snapshot = await getDocs(qItems);
+
+                itemsArray = [];
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    itemsArray.push({
+                        id: doc.id,
+                        itemName: item.itemName,
+                        itemCode: item.serialNo,
+                        unit: item.unit,
+                        itemType: item.itemType,
+                        currentStock: item.currentStock || 0
+                    });
+                });
+                setCache('cache_itemmaster', { lastFetched: Date.now(), items: itemsArray });
+                console.log('Loaded items:', itemsArray.length);
+            } catch (error) {
+                console.error('Error loading items:', error);
+            }
+        }
+
+        // Right-side search panel + typeahead for any input
+        function formatTs(ts) {
+            if (!ts) return '';
+            try { const d = new Date(ts); return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`; } catch { return ''; }
+        }
+
+        function renderSearchPanel(title, items, formatter, onSelect, metaKey) {
+            console.log('Rendering search panel:', title, 'items:', items.length);
+            const panel = document.getElementById('searchPanel');
+            const titleEl = document.getElementById('searchPanelTitle');
+            const metaEl = document.getElementById('searchPanelMeta');
+            const refreshBtn = document.getElementById('searchPanelRefresh');
+            const hintEl = document.getElementById('searchPanelHint');
+            const list = document.getElementById('searchPanelList');
+            
+            if (!panel || !titleEl || !list) {
+                console.error('Search panel elements not found');
+                return;
+            }
+            
+            titleEl.textContent = title;
+            const cache = getCache(metaKey);
+            metaEl.textContent = cache && cache.lastFetched ? `Last fetched: ${formatTs(cache.lastFetched)}` : '';
+            list.innerHTML = '';
+            items.forEach((it, idx) => {
+                const li = document.createElement('li');
+                li.className = 'right-search-item';
+                li.tabIndex = 0;
+                li.dataset.index = String(idx);
+                li.innerHTML = formatter(it);
+                li.addEventListener('click', () => { onSelect(it); });
+                li.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter') { ev.preventDefault(); onSelect(it); }
+                    if (ev.key === 'ArrowDown') {
+                        ev.preventDefault(); const next = li.nextElementSibling; if (next) next.focus();
+                    }
+                    if (ev.key === 'ArrowUp') {
+                        ev.preventDefault(); const prev = li.previousElementSibling; if (prev) prev.focus();
+                    }
+                });
+                list.appendChild(li);
+            });
+            panel.classList.add('show');
+            console.log('Search panel shown with', items.length, 'items');
+            // Keep focus in the input by default; ArrowDown will move focus into the list
+
+            // Show new day hint if applicable
+            hintEl.style.display = 'none';
+            const last = cache && cache.lastFetched ? new Date(cache.lastFetched) : null;
+            const now = new Date();
+            if (!last || last.toDateString() !== now.toDateString()) {
+                hintEl.textContent = 'Data may be from a previous day. Click refresh to fetch today\'s data.';
+                hintEl.style.display = 'inline-block';
+                setTimeout(() => { hintEl.style.display = 'none'; }, 4000);
+            }
+
+            // Wire refresh
+            refreshBtn.onclick = async () => {
+                if (title.includes('Party')) {
+                    await refreshParties();
+                } else {
+                    await refreshItems();
+                }
+                hideSearchPanel();
+            };
+        }
+
+        async function refreshParties() {
+            try {
+                const qParties = query(collection(db, 'partymaster'), orderBy('partyName'));
+                const snapshot = await getDocs(qParties);
+                const fresh = [];
+                snapshot.forEach(d => { const p = d.data(); fresh.push({ id: d.id, partyName: p.partyName, partyId: p.partyId, contactPerson: p.contactPerson, phoneNumber: p.phoneNumber, address: p.address, partyType: p.partyType }); });
+                partiesArray = fresh;
+                partyArray = fresh;
+                setCache('cache_partymaster', { lastFetched: Date.now(), items: partiesArray });
+                console.log('Refreshed parties:', partiesArray.length);
+            } catch (e) { console.error('refreshParties error', e); }
+        }
+
+        async function refreshItems() {
+            try {
+                const qItems = query(collection(db, 'itemmaster'), orderBy('itemName'));
+                const snapshot = await getDocs(qItems);
+                const fresh = [];
+                snapshot.forEach(d => { const it = d.data(); fresh.push({ id: d.id, itemName: it.itemName, itemCode: it.serialNo, unit: it.unit, itemType: it.itemType, currentStock: it.currentStock || 0 }); });
+                itemsArray = fresh;
+                setCache('cache_itemmaster', { lastFetched: Date.now(), items: itemsArray });
+                console.log('Refreshed items:', itemsArray.length);
+            } catch (e) { console.error('refreshItems error', e); }
+        }
+
+        function hideSearchPanel() {
+            const panel = document.getElementById('searchPanel');
+            panel.classList.remove('show');
+        }
+
+        // Single global click handler to avoid flicker
+        document.addEventListener('mousedown', (e) => {
+            const panel = document.getElementById('searchPanel');
+            const partyInput = document.getElementById('partyName');
+            const itemInput = document.getElementById('itemName');
+            const clickedInsideInputs = (partyInput && partyInput.contains(e.target)) || itemInput.contains(e.target);
+            const clickedInsidePanel = panel.contains(e.target);
+            if (!clickedInsideInputs && !clickedInsidePanel) {
+                hideSearchPanel();
+            }
+        });
+
+        function focusNextField(currentId) {
+            const form = document.getElementById('issueForm');
+            const focusables = Array.from(form.querySelectorAll('input, select, textarea, button'))
+                .filter(el => !el.disabled && el.type !== 'hidden');
+            const idx = focusables.findIndex(el => el.id === currentId);
+            if (idx >= 0 && idx + 1 < focusables.length) {
+                focusables[idx + 1].focus();
+            }
+        }
+
+        function setupTypeahead({ inputId, source, title, formatter, onPick }) {
+            const input = document.getElementById(inputId);
+            console.log('Setting up typeahead for:', inputId, title);
+            
+            async function ensureDatasetLoaded() {
+                const isParty = title.includes('Party');
+                const arr = source();
+                console.log('Dataset loaded:', inputId, 'count:', arr ? arr.length : 0);
+                if (!arr || arr.length === 0) {
+                    console.log('Refreshing data for:', inputId);
+                    if (isParty) { await refreshParties(); }
+                    else { await refreshItems(); }
+                }
+            }
+            input.addEventListener('mousedown', (e) => {
+                // prevent blur during click
+                e.preventDefault();
+                input.focus();
+            });
+            input.addEventListener('focus', async () => {
+                console.log('Focus event on:', inputId);
+                await ensureDatasetLoaded();
+                const arr = source();
+                console.log('Showing panel for:', inputId, 'items:', arr ? arr.length : 0);
+                if (arr && arr.length) {
+                    const initial = arr.slice(0, 200);
+                    renderSearchPanel(title, initial, (x) => formatter(x), (picked) => {
+                        onPick(picked);
+                        hideSearchPanel();
+                        focusNextField(inputId);
+                    }, title.includes('Party') ? 'cache_partymaster' : 'cache_itemmaster');
+                } else {
+                    console.log('No data to show for:', inputId);
+                }
+            });
+            input.addEventListener('input', () => {
+                const q = input.value.trim().toLowerCase();
+                const arr = source();
+                let matches;
+                if (q.length < 3) {
+                    matches = (arr || []).slice(0, 200);
+                } else {
+                    matches = (arr || []).filter(x => formatter(x).toLowerCase().includes(q)).slice(0, 200);
+                }
+                if (!matches || matches.length === 0) { hideSearchPanel(); return; }
+                renderSearchPanel(title, matches, (x) => formatter(x), (picked) => {
+                    onPick(picked);
+                    hideSearchPanel();
+                    focusNextField(inputId);
+                }, title.includes('Party') ? 'cache_partymaster' : 'cache_itemmaster');
+            });
+            input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'ArrowDown') {
+                    const first = document.querySelector('#searchPanelList .right-search-item');
+                    if (first) { ev.preventDefault(); document.getElementById('searchPanel').classList.add('show'); first.focus(); }
+                }
+            });
+            // Do not attach per-input global hide handlers anymore; a single global handler is defined below
+        }
+
+        // Setup search listeners
+        function setupSearchListeners() {
+            // Typeahead: Party Name
+            setupTypeahead({
+                inputId: 'partyName',
+                source: () => partyArray,
+                title: 'Select Party',
+                formatter: (p) => `${p.partyName}${p.partyId ? ' — ' + p.partyId : ''}${p.contactPerson ? ' | ' + p.contactPerson : ''}`,
+                onPick: (p) => {
+                    document.getElementById('partyName').value = p.partyName;
+                    document.getElementById('partyDocId').value = p.id || '';
+                    document.getElementById('partyCodeHidden').value = p.partyId || '';
+                }
+            });
+
+            // Typeahead: Item Name
+            setupTypeahead({
+                inputId: 'itemName',
+                source: () => itemsArray,
+                title: 'Select Item',
+                formatter: (it) => `${it.itemName} ${it.itemCode ? '(' + it.itemCode + ')' : ''}`,
+                onPick: (it) => {
+                    document.getElementById('itemName').value = it.itemName;
+                    document.getElementById('itemCode').value = it.itemCode || '';
+                    document.getElementById('itemDocId').value = it.id || '';
+                    document.getElementById('itemIdHidden').value = it.itemCode || '';
+                }
+            });
+
+            // Main search button click
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                // Update current filters from form values
+                currentFilters.issueDate = document.getElementById('searchIssueDate').value;
+                currentFilters.partyName = document.getElementById('searchPartyName').value.toLowerCase();
+                currentFilters.partyId = document.getElementById('searchPartyId').value.toLowerCase();
+                currentFilters.issueType = document.getElementById('searchIssueType').value;
+                currentFilters.fromDate = document.getElementById('searchFromDate').value;
+                currentFilters.toDate = document.getElementById('searchToDate').value;
+                
+                // Reset pagination and load issues
+                hasMore = true;
+                lastVisible = null;
+                loadIssues(true);
+            });
+
+            // Refresh button click
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Reset all filters to default values
+                currentFilters = {
+                    issueDate: '',
+                    partyName: '',
+                    partyId: '',
+                    issueType: '',
+                    fromDate: '',
+                    toDate: ''
+                };
+                
+                // Reset form values
+                document.getElementById('searchIssueDate').value = '';
+                document.getElementById('searchPartyName').value = '';
+                document.getElementById('searchPartyId').value = '';
+                document.getElementById('searchIssueType').value = '';
+                document.getElementById('searchFromDate').value = '';
+                document.getElementById('searchToDate').value = '';
+                
+                // Reset pagination and load issues
+                hasMore = true;
+                lastVisible = null;
+                loadIssues(true);
+                
+                showNotification('Filters reset and data refreshed!');
+            });
+
+            // Download Excel button
+            document.getElementById('downloadExcelBtn').addEventListener('click', function() {
+                downloadExcelData();
+            });
+        }
+
+        // Load issues with pagination and filters
+        async function loadIssues(reset = false) {
+            if (isLoading || (!hasMore && !reset)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                
+                let q = query(
+                    collection(db, 'issues'),
+                    orderBy('createdAt', 'desc'),
+                    qLimit(pageSize)
+                );
+
+                if (!reset && lastVisible) {
+                    q = query(
+                        collection(db, 'issues'),
+                        orderBy('createdAt', 'desc'),
+                        qStartAfter(lastVisible),
+                        qLimit(pageSize)
+                    );
+                }
+
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    hasMore = false;
+                    document.getElementById('noMore').style.display = 'block';
+                    return;
+                }
+
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                const tbody = document.getElementById('issueTable');
+                
+                if (reset) {
+                    tbody.innerHTML = '';
+                }
+
+                let filteredIssues = [];
+                
+                snapshot.forEach(doc => {
+                    const issue = doc.data();
+                    issue.id = doc.id;
+                    
+                    // Apply filters
+                    let matches = true;
+                    
+                    if (currentFilters.issueDate && issue.issueDate !== currentFilters.issueDate) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.partyName && !issue.partyName.toLowerCase().includes(currentFilters.partyName)) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.partyId && !issue.partyId.toLowerCase().includes(currentFilters.partyId)) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.issueType && issue.issueType !== currentFilters.issueType) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.fromDate && issue.createdAt && issue.createdAt.toDate().toISOString().split('T')[0] < currentFilters.fromDate) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.toDate && issue.createdAt && issue.createdAt.toDate().toISOString().split('T')[0] > currentFilters.toDate) {
+                        matches = false;
+                    }
+                    
+                    if (matches) {
+                        filteredIssues.push(issue);
+                    }
+                });
+
+                if (reset && filteredIssues.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">No issues found</td></tr>';
+                } else {
+                    filteredIssues.forEach(issue => {
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', issue.id);
+                        tr.innerHTML = `
+                            <td>${issue.issueDate || ''}</td>
+                            <td>${issue.partyName || ''}</td>
+                            <td>${issue.partyId || ''}</td>
+                            <td>${issue.itemName || ''}</td>
+                            <td>${issue.itemCode || ''}</td>
+                            <td>${issue.quantity || ''}</td>
+                            <td>${issue.issueType || ''}</td>
+                            <td>${issue.description || ''}</td>
+                            <td>${issue.imageUrl ? '<img src="' + issue.imageUrl + '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">' : 'No Image'}</td>
+                            <td>${issue.createdAt ? issue.createdAt.toDate().toLocaleDateString() : ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="editIssue('${issue.id}')" title="Edit">✏️</button>
+                                <button class="action-btn delete-btn" onclick="deleteIssue('${issue.id}')" title="Delete">🗑️</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading issues:', error);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Infinite scroll
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadIssues();
+            }
+        });
+
+        // Image handling functions
+        function openImageModal() {
+            document.getElementById('imageModal').style.display = 'block';
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        function captureImage() {
+            closeImageModal();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            input.onchange = function(e) {
+                handleImageFile(e.target.files[0]);
+            };
+            input.click();
+        }
+
+        function selectFromGallery() {
+            closeImageModal();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                handleImageFile(e.target.files[0]);
+            };
+            input.click();
+        }
+
+        function handleImageFile(file) {
+            if (file) {
+                selectedImageFile = file;
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Upload image to Firebase Storage
+        async function uploadImage() {
+            if (!selectedImageFile) return null;
+
+            try {
+                const fileName = `issue_${Date.now()}_${selectedImageFile.name}`;
+                const imageRef = storageRef(storage, `invabrar/issues/${fileName}`);
+                const snapshot = await uploadBytes(imageRef, selectedImageFile);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                showNotification('Error uploading image. Please try again.', 'error');
+                return null;
+            }
+        }
+
+        // Edit issue
+        async function editIssue(docId) {
+            try {
+                const docRef = doc(db, 'issues', docId);
+                const docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    showNotification('Issue not found.', 'error');
+                    return;
+                }
+
+                const issue = docSnap.data();
+                
+                // Fill the form with issue data
+                document.getElementById('issueDate').value = issue.issueDate || '';
+                document.getElementById('partyName').value = issue.partyName || '';
+                document.getElementById('partyDocId').value = issue.partyDocId || '';
+                document.getElementById('partyCodeHidden').value = issue.partyId || '';
+                document.getElementById('itemName').value = issue.itemName || '';
+                document.getElementById('itemCode').value = issue.itemCode || '';
+                document.getElementById('itemDocId').value = issue.itemDocId || '';
+                document.getElementById('itemIdHidden').value = issue.itemId || '';
+                document.getElementById('quantity').value = issue.quantity || '';
+                document.getElementById('issueType').value = issue.issueType || '';
+                document.getElementById('partyId').value = issue.partyId || '';
+                document.getElementById('description').value = issue.description || '';
+
+                // Show existing image if available
+                if (issue.imageUrl) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = issue.imageUrl;
+                    preview.style.display = 'block';
+                }
+
+                // Store the document ID for update
+                document.getElementById('issueForm').dataset.editId = docId;
+                
+                // Change button text
+                document.getElementById('submitBtn').textContent = 'Update Issue';
+                
+                // Switch to form tab
+                switchTab('form');
+            } catch (error) {
+                console.error('Error loading issue:', error);
+                showNotification('Error loading issue details. Please try again.', 'error');
+            }
+        }
+
+        // Delete issue
+        async function deleteIssue(docId) {
+            if (!confirm('Are you sure you want to delete this issue?')) {
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'issues', docId);
+                console.log(`[Issue] DELETE → database: 'invabrar', path: '${docRef.path}'`);
+                
+                // Fetch doc to get image URL BEFORE deleting
+                const snap = await getDoc(docRef);
+                const data = snap.exists() ? snap.data() : null;
+                
+                // Delete the document first
+                await deleteDoc(docRef);
+
+                // Delete associated image if stored
+                if (data && data.imageUrl) {
+                    try {
+                        console.log(`[Issue] Attempting to delete image: ${data.imageUrl}`);
+                        
+                        // Extract the storage path from the download URL
+                        const url = new URL(data.imageUrl);
+                        console.log(`[Issue] Parsed URL:`, url);
+                        
+                        // Firebase Storage URLs have the format: https://firebasestorage.googleapis.com/v0/b/bucket/o/path%2Fto%2Ffile
+                        // We need to extract the path after '/o/' and decode it
+                        const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+                        if (pathMatch) {
+                            const encodedPath = pathMatch[1];
+                            const decodedPath = decodeURIComponent(encodedPath);
+                            console.log(`[Issue] Decoded storage path: ${decodedPath}`);
+                            
+                            const imgRef = storageRef(storage, decodedPath);
+                            await deleteObject(imgRef);
+                            console.log(`[Issue] Image successfully deleted from storage: ${decodedPath}`);
+                        } else {
+                            console.warn(`[Issue] Could not extract path from URL: ${data.imageUrl}`);
+                        }
+                    } catch (imgErr) {
+                        console.error('Failed to delete image from storage:', imgErr);
+                        console.error('Image URL was:', data.imageUrl);
+                    }
+                }
+
+                showNotification('Issue deleted successfully!');
+                
+                // Remove the row from the table immediately
+                const row = document.querySelector(`tr[data-id='${docId}']`);
+                if (row) {
+                    row.remove();
+                }
+                
+                // Reset pagination and reload if needed
+                hasMore = true;
+                lastVisible = null;
+                document.getElementById('noMore').style.display = 'none';
+                loadIssues(true);
+            } catch (error) {
+                console.error('Error deleting issue:', error);
+                showNotification('Error deleting issue. Please try again.', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Download Excel data function
+        async function downloadExcelData() {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+                showNotification('Excel library not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+
+            const downloadBtn = document.getElementById('downloadExcelBtn');
+            const originalText = downloadBtn.textContent;
+            
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = '⏳ Loading...';
+                
+                // Get all issues
+                const q = query(collection(db, 'issues'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    showNotification('No data found for download.', 'error');
+                    return;
+                }
+
+                console.log(`Found ${snapshot.size} records for Excel download`);
+
+                // Prepare data for Excel
+                const excelData = [];
+                const headers = [
+                    'Issue Date', 'Party Name', 'Party ID', 'Item Name', 'Item Code', 'Quantity', 'Issue Type', 'Description', 'Created Date'
+                ];
+                excelData.push(headers);
+
+                snapshot.forEach(doc => {
+                    const issue = doc.data();
+                    const row = [
+                        issue.issueDate || '',
+                        issue.partyName || '',
+                        issue.partyId || '',
+                        issue.itemName || '',
+                        issue.itemCode || '',
+                        issue.quantity || '',
+                        issue.issueType || '',
+                        issue.description || '',
+                        issue.createdAt ? issue.createdAt.toDate().toLocaleDateString() : ''
+                    ];
+                    excelData.push(row);
+                });
+
+                // Generate Excel file
+                const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Issues');
+
+                // Auto-size columns
+                const columnWidths = headers.map(header => ({ wch: Math.max(header.length, 15) }));
+                worksheet['!cols'] = columnWidths;
+
+                // Generate filename
+                const filename = `issues_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+                // Download the file
+                XLSX.writeFile(workbook, filename);
+                showNotification(`Excel file downloaded successfully! (${snapshot.size} records)`);
+
+            } catch (error) {
+                console.error('Error downloading Excel:', error);
+                showNotification('Error downloading Excel file. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = originalText;
+            }
+        }
+
+        // Clear errors when user starts typing
+        document.getElementById('partyName').addEventListener('input', function() {
+            clearFieldError('partyName');
+        });
+        
+        document.getElementById('itemName').addEventListener('input', function() {
+            clearFieldError('itemName');
+        });
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('issueForm').reset();
+            
+            // Hide image preview
+            document.getElementById('imagePreview').style.display = 'none';
+            selectedImageFile = null;
+            
+            // Clear any field errors
+            clearFieldError('partyName');
+            clearFieldError('itemName');
+            
+            // Reset button text and remove edit ID
+            document.getElementById('submitBtn').textContent = 'Save Issue';
+            delete document.getElementById('issueForm').dataset.editId;
+        }
+
+        // Stock management functions (copied from itemmaster for issue form)
+        async function updateItemStock(itemDocId, itemCode, quantity, operation, formName) {
+            try {
+                // Find item by docId or itemCode
+                let itemRef = null;
+                let itemData = null;
+                
+                if (itemDocId) {
+                    // Try by docId first
+                    const docRef = doc(db, 'itemmaster', itemDocId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        itemRef = docRef;
+                        itemData = docSnap.data();
+                    }
+                }
+                
+                if (!itemRef && itemCode) {
+                    // Try by itemCode (serialNo)
+                    const q = query(collection(db, 'itemmaster'), where('serialNo', '==', itemCode));
+                    const snapshot = await getDocs(q);
+                    if (!snapshot.empty) {
+                        const docSnap = snapshot.docs[0];
+                        itemRef = doc(db, 'itemmaster', docSnap.id);
+                        itemData = docSnap.data();
+                    }
+                }
+                
+                if (!itemRef || !itemData) {
+                    console.error('Item not found for stock update:', { itemDocId, itemCode });
+                    return false;
+                }
+                
+                const currentStock = itemData.currentStock || 0;
+                let newStock = currentStock;
+                
+                if (operation === 'add') {
+                    newStock = currentStock + quantity;
+                } else if (operation === 'subtract') {
+                    newStock = Math.max(0, currentStock - quantity);
+                }
+                
+                // Update the item's current stock
+                await updateDoc(itemRef, {
+                    currentStock: newStock,
+                    updatedAt: new Date()
+                });
+                
+                // Log the stock change
+                await logStockChange({
+                    itemName: itemData.itemName,
+                    itemCode: itemData.serialNo,
+                    operation: operation,
+                    quantity: quantity,
+                    previousStock: currentStock,
+                    newStock: newStock,
+                    formName: formName,
+                    timestamp: new Date()
+                });
+                
+                console.log(`Stock updated for ${itemData.itemName}: ${currentStock} -> ${newStock} (${operation} ${quantity})`);
+                return true;
+                
+            } catch (error) {
+                console.error('Error updating item stock:', error);
+                return false;
+            }
+        }
+        
+        async function logStockChange(logData) {
+            try {
+                await addDoc(collection(db, 'logger'), logData);
+                console.log('Stock change logged:', logData);
+            } catch (error) {
+                console.error('Error logging stock change:', error);
+            }
+        }
+
+        // Validation functions
+        function validatePartyName(partyName) {
+            if (!partyName || partyName.trim() === '') return { valid: true };
+            
+            const party = partiesArray.find(p => p.partyName.toLowerCase() === partyName.toLowerCase());
+            if (!party) {
+                return { valid: false, message: 'Party name not found. Please select from the list.' };
+            }
+            return { valid: true, party };
+        }
+        
+        function validateItemName(itemName) {
+            if (!itemName || itemName.trim() === '') return { valid: true };
+            
+            const item = itemsArray.find(i => i.itemName.toLowerCase() === itemName.toLowerCase());
+            if (!item) {
+                return { valid: false, message: 'Item name not found. Please select from the list.' };
+            }
+            return { valid: true, item };
+        }
+        
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else {
+                // Create error div if it doesn't exist
+                const error = document.createElement('div');
+                error.id = fieldId + 'Error';
+                error.className = 'field-error';
+                error.textContent = message;
+                error.style.color = '#dc3545';
+                error.style.fontSize = '12px';
+                error.style.marginTop = '2px';
+                field.parentNode.insertBefore(error, field.nextSibling);
+            }
+            
+            field.style.borderColor = '#dc3545';
+        }
+        
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            
+            field.style.borderColor = '';
+        }
+
+        // Form submission
+        document.getElementById('issueForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = localStorage.getItem('userId');
+
+            try {
+                // Clear any previous errors
+                clearFieldError('partyName');
+                clearFieldError('itemName');
+
+                // Validate party name if provided
+                const partyName = document.getElementById('partyName').value.trim();
+                if (partyName) {
+                    const partyValidation = validatePartyName(partyName);
+                    if (!partyValidation.valid) {
+                        showFieldError('partyName', partyValidation.message);
+                        return;
+                    }
+                }
+                
+                // Validate item name if provided
+                const itemName = document.getElementById('itemName').value.trim();
+                if (itemName) {
+                    const itemValidation = validateItemName(itemName);
+                    if (!itemValidation.valid) {
+                        showFieldError('itemName', itemValidation.message);
+                        return;
+                    }
+                }
+
+                // Upload image if selected
+                let imageUrl = null;
+                if (selectedImageFile) {
+                    imageUrl = await uploadImage();
+                    if (!imageUrl) {
+                        showNotification('Error uploading image. Please try again.', 'error');
+                        return;
+                    }
+                }
+
+                const issueData = {
+                    issueDate: document.getElementById('issueDate').value,
+                    partyName: document.getElementById('partyName').value,
+                    partyId: document.getElementById('partyId').value,
+                    partyDocId: document.getElementById('partyDocId').value,
+                    partyCodeHidden: document.getElementById('partyCodeHidden').value,
+                    itemName: document.getElementById('itemName').value,
+                    itemCode: document.getElementById('itemCode').value,
+                    itemDocId: document.getElementById('itemDocId').value,
+                    itemId: document.getElementById('itemIdHidden').value,
+                    quantity: parseInt(document.getElementById('quantity').value) || 1,
+                    issueType: document.getElementById('issueType').value,
+                    description: document.getElementById('description').value,
+                    updatedAt: new Date()
+                };
+
+                // Add image URL if available
+                if (imageUrl) {
+                    issueData.imageUrl = imageUrl;
+                }
+
+                const editId = this.dataset.editId;
+                if (editId) {
+                    // Update existing issue
+                    await updateDoc(doc(db, 'issues', editId), issueData);
+                    showNotification('Issue updated successfully!');
+                } else {
+                    // Create new issue
+                    issueData.createdBy = userId;
+                    issueData.createdAt = new Date();
+                    await addDoc(collection(db, 'issues'), issueData);
+                    
+                    // Update item stock (subtract quantity)
+                    const itemDocId = document.getElementById('itemDocId').value;
+                    const itemCode = document.getElementById('itemCode').value;
+                    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+                    
+                    if (itemDocId || itemCode) {
+                        try {
+                            await updateItemStock(itemDocId, itemCode, quantity, 'subtract', 'issue');
+                            console.log('Stock updated for issued item');
+                        } catch (stockError) {
+                            console.error('Error updating stock:', stockError);
+                            // Don't fail the entire operation if stock update fails
+                        }
+                    }
+                    
+                    showNotification('Issue saved successfully!');
+                }
+
+                resetForm();
+                if (editId) {
+                    loadIssues(true); // Refresh the list if editing
+                }
+            } catch (error) {
+                console.error('Error saving issue:', error);
+                showNotification('Error saving issue. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

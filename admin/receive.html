@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .btn-image {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-image:hover {
+            background-color: #45a049;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+        /* Search filters */
+        .search-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+
+        .search-filters input,
+        .search-filters select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .search-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .search-btn:hover {
+            background: #1976D2;
+        }
+
+        .search-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .refresh-btn:hover {
+            background: #f57c00;
+        }
+
+        .refresh-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .download-excel-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .download-excel-btn:hover {
+            background: #218838;
+        }
+
+        .download-excel-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Mobile responsive for search filters */
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1400px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 12px;
+            }
+        }
+
+        @media (min-width: 1401px) {
+            .search-filters {
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                gap: 15px;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        /* Image preview */
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Global right-side search panel */
+        .right-search-panel {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            bottom: 0;
+            width: min(520px, 45vw);
+            background: #f0f0f0;
+            border-left: 1px solid #ddd;
+            box-shadow: -2px 0 6px rgba(0,0,0,0.08);
+            overflow-y: auto;
+            display: none;
+            z-index: 1500;
+        }
+        .right-search-panel.show { display: block; }
+        .right-search-header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 10px 12px; font-weight: bold; color: #333; border-bottom: 1px solid #ddd; background: #fafafa; position: sticky; top: 0; }
+        .right-search-meta { font-weight: normal; color:#555; font-size: 12px; }
+        .right-search-actions { display:flex; align-items:center; gap:8px; }
+        .refresh-btn-inline { cursor:pointer; border:none; background:#eee; padding:4px 8px; border-radius:4px; }
+        .refresh-btn-inline:hover { background:#e0e0e0; }
+        .right-search-hint { font-weight: normal; color:#8a6d3b; background:#fff3cd; border:1px solid #ffeeba; padding:4px 8px; border-radius:4px; margin-left:auto; }
+        .right-search-list { list-style: none; margin: 0; padding: 0; }
+        .right-search-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #e6e6e6; outline: none; }
+        .right-search-item:hover, .right-search-item:focus { background: #e7e7e7; }
+        .right-search-item.active { background: #fff3cd; }
+
+        /* Searchable dropdown */
+        .searchable-dropdown {
+            position: relative;
+        }
+
+        .searchable-dropdown input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Guarantee checkbox styling */
+        .guarantee-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .guarantee-container input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .guarantee-months {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .guarantee-months.show {
+            display: block;
+        }
+
+        /* Image modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-camera {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-gallery {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>Receive Management</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit Receive</button>
+            <button class="tab" onclick="switchTab('list')">Receive List</button>
+        </div>
+
+        <div id="formTab" class="tab-content active">
+            <div class="form-container">
+                <form id="receiveForm">
+                    <input type="hidden" id="partyDocId">
+                    <input type="hidden" id="partyCodeHidden">
+                    <input type="hidden" id="itemDocId">
+                    <input type="hidden" id="itemIdHidden">
+                    <!-- Receive Information Section -->
+                    <div class="section-title">Receive Information</div>
+                    
+                    <div class="form-row">
+                        
+                        <div class="form-group">
+                            <label for="receiveDate">Date of Receive <span class="required">*</span></label>
+                            <input type="date" id="receiveDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="partyName">Party Name <span class="required">*</span></label>
+                            <input type="text" id="partyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemName">Item Name <span class="required">*</span></label>
+                            <div class="searchable-dropdown">
+                                <input type="text" id="itemName" placeholder="Search and select item..." required>
+                                <div class="dropdown-list" id="itemDropdown"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemCode">Item Code</label>
+                            <input type="text" id="itemCode" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="serialNo">Serial No. <span class="required">*</span></label>
+                            <input type="text" id="serialNo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity <span class="required">*</span></label>
+                            <input type="number" id="quantity" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemType">Type <span class="required">*</span></label>
+                            <select id="itemType" required>
+                                <option value="">Select Type</option>
+                                <option value="MECHANICAL">MECHANICAL</option>
+                                <option value="ELECTRICAL">ELECTRICAL</option>
+                                <option value="CONSUMABLE">CONSUMABLE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guaranteeCheckbox">Guarantee</label>
+                            <div class="guarantee-container">
+                                <input type="checkbox" id="guaranteeCheckbox">
+                                <label for="guaranteeCheckbox">Item has guarantee</label>
+                            </div>
+                            <div class="guarantee-months" id="guaranteeMonths">
+                                <input type="number" id="guaranteeMonthsInput" placeholder="How many months?" min="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="imageUpload">Item Image</label>
+                            <button type="button" class="btn btn-image" onclick="openImageModal()">
+                                📷 Capture/Select Image
+                            </button>
+                            <div class="image-preview" id="imagePreview">
+                                <img id="previewImg" src="" alt="Preview">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                        <textarea id="remarks" placeholder="Enter any remarks about the receive..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Receive</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="listTab" class="tab-content">
+            <div class="search-filters">
+                <input type="text" id="searchPartyName" placeholder="Search by party name...">
+                <input type="text" id="searchItemName" placeholder="Search by item name...">
+                <input type="text" id="searchSerialNo" placeholder="Search by serial no...">
+                <select id="searchItemType">
+                    <option value="">All Types</option>
+                    <option value="MECHANICAL">MECHANICAL</option>
+                    <option value="ELECTRICAL">ELECTRICAL</option>
+                    <option value="CONSUMABLE">CONSUMABLE</option>
+                </select>
+                <input type="date" id="searchFromDate" placeholder="From Date">
+                <input type="date" id="searchToDate" placeholder="To Date">
+                <select id="searchGuarantee">
+                    <option value="">All Items</option>
+                    <option value="true">With Guarantee</option>
+                    <option value="false">Without Guarantee</option>
+                </select>
+                <button type="button" id="searchBtn" class="search-btn" title="Search">
+                    🔍 Search
+                </button>
+                <button type="button" id="refreshBtn" class="refresh-btn" title="Refresh">
+                    🔄 Refresh
+                </button>
+                <button type="button" id="downloadExcelBtn" class="download-excel-btn" title="Download Excel">
+                    📊 Download Excel
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Party Name</th>
+                        <th>Receive Date</th>
+                        <th>Item Name</th>
+                        <th>Item Code</th>
+                        <th>Serial No.</th>
+                        <th>Quantity</th>
+                        <th>Type</th>
+                        <th>Guarantee</th>
+                        <th>Image</th>
+                        <th>Remarks</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="purchaseTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading receives...</div>
+            <div id="noMore" class="no-more">No more receives to load</div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal">
+        <div class="modal-content">
+            <h3>Select Image Source</h3>
+            <p>Choose how you want to add an image:</p>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-camera" onclick="captureImage()">📷 Camera</button>
+                <button class="btn-modal btn-gallery" onclick="selectFromGallery()">🖼️ Gallery</button>
+                <button class="btn-modal btn-cancel" onclick="closeImageModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Right-side search panel -->
+    <div id="searchPanel" class="right-search-panel" tabindex="-1">
+        <div id="searchPanelHeader" class="right-search-header">
+            <span id="searchPanelTitle"></span>
+            <span id="searchPanelMeta" class="right-search-meta"></span>
+            <button id="searchPanelRefresh" class="refresh-btn-inline" title="Refresh">🔄 Refresh</button>
+            <span id="searchPanelHint" class="right-search-hint" style="display:none;"></span>
+        </div>
+        <ul id="searchPanelList" class="right-search-list"></ul>
+    </div>
+
+    <!-- Firebase SDKs will be loaded via ES modules in the script below -->
+    
+    <!-- Add XLSX library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Version Management -->
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js';
+        import { getFirestore, collection, doc, getDoc, getDocs, query, where, orderBy, addDoc, updateDoc, deleteDoc, limit as qLimit, startAfter as qStartAfter } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js';
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js';
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, 'invabrar');
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+
+        function getDatabaseName() {
+            try { return db && db._databaseId && db._databaseId.database ? db._databaseId.database : '(default)'; } catch (e) { return '(unknown)'; }
+        }
+        console.log('[Receive] Using Firestore database:', getDatabaseName());
+
+        // Load the menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('menuContainer').innerHTML = html;
+                });
+        }
+
+        // Variables for pagination and search
+        let lastVisible = null;
+        let isLoading = false;
+        let hasMore = true;
+        const pageSize = 50;
+        let currentFilters = {
+            
+            itemName: '',
+            serialNo: '',
+            itemType: '',
+            fromDate: '',
+            toDate: '',
+            guarantee: ''
+        };
+        let itemsArray = [];
+        let selectedImageFile = null;
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load menu first
+            loadMenu();
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Set default date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('receiveDate').value = today;
+            
+            // Load items for dropdown
+            await loadItemsForDropdown();
+            
+            // Preload parties for party typeahead
+            // Load parties from cache, then refresh in background
+            const partyCache = getCache('cache_partymaster');
+            if (partyCache && Array.isArray(partyCache.items)) {
+                partyArray = partyCache.items;
+            }
+            try {
+                const qParties = query(collection(db, 'partymaster'), orderBy('partyName'));
+                const partySnap = await getDocs(qParties);
+                const fresh = [];
+                partySnap.forEach(d => {
+                    const p = d.data();
+                    fresh.push({ id: d.id, partyName: p.partyName, partyId: p.partyId, contactPerson: p.contactPerson, phoneNumber: p.phoneNumber, address: p.address, partyType: p.partyType });
+                });
+                partyArray = fresh;
+                setCache('cache_partymaster', { lastFetched: Date.now(), items: partyArray });
+            } catch (err) { console.error('Error preloading parties:', err); }
+            
+            // Setup search listeners
+            setupSearchListeners();
+
+            // Typeahead: Party Name
+            setupTypeahead({
+                inputId: 'partyName',
+                source: () => partyArray,
+                title: 'Select Party',
+                formatter: (p) => `${p.partyName}${p.partyId ? ' — ' + p.partyId : ''}${p.contactPerson ? ' | ' + p.contactPerson : ''}`,
+                onPick: (p) => {
+                    document.getElementById('partyName').value = p.partyName;
+                    document.getElementById('partyDocId').value = p.id || '';
+                    document.getElementById('partyCodeHidden').value = p.partyId || '';
+                }
+            });
+
+            // Typeahead: Item Name
+            setupTypeahead({
+                inputId: 'itemName',
+                source: () => itemsArray,
+                title: 'Select Item',
+                formatter: (it) => `${it.itemName} ${it.itemCode ? '(' + it.itemCode + ')' : ''}`,
+                onPick: (it) => {
+                    document.getElementById('itemName').value = it.itemName;
+                    document.getElementById('itemCode').value = it.itemCode || '';
+                    document.getElementById('itemDocId').value = it.id || '';
+                    document.getElementById('itemIdHidden').value = it.itemCode || '';
+                }
+            });
+            
+            // Check for updates
+            if (window.VersionManager) {
+                VersionManager.checkForUpdates();
+            }
+        });
+
+        // Toggle menu function (fallback)
+        window.toggleMenu = function() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Switch tabs
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadPurchases(true);
+            }
+        }
+
+        // Load items from itemmaster for dropdown
+        async function loadItemsForDropdown() {
+            // Try cache first
+            const cache = getCache('cache_itemmaster');
+            if (cache && Array.isArray(cache.items)) {
+                itemsArray = cache.items;
+            }
+            try {
+                const qItems = query(collection(db, 'itemmaster'), orderBy('itemName'));
+                const snapshot = await getDocs(qItems);
+
+                itemsArray = [];
+                snapshot.forEach(docSnap => {
+                    const item = docSnap.data();
+                    itemsArray.push({
+                        id: docSnap.id,
+                        itemName: item.itemName,
+                        itemCode: item.serialNo,
+                        unit: item.unit,
+                        itemType: item.itemType
+                    });
+                });
+                setCache('cache_itemmaster', { lastFetched: Date.now(), items: itemsArray });
+            } catch (error) {
+                console.error('Error loading items:', error);
+            }
+        }
+
+        // Right-side search panel + typeahead for any input
+        let partyArray = [];
+        function getCache(key) {
+            try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch { return null; }
+        }
+        function setCache(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+        }
+        
+        // Validation functions
+        function validatePartyName(partyName) {
+            if (!partyName || partyName.trim() === '') return { valid: true };
+            
+            const party = partyArray.find(p => p.partyName.toLowerCase() === partyName.toLowerCase());
+            if (!party) {
+                return { valid: false, message: 'Party name not found. Please select from the list.' };
+            }
+            return { valid: true, party };
+        }
+        
+        function validateItemName(itemName) {
+            if (!itemName || itemName.trim() === '') return { valid: true };
+            
+            const item = itemsArray.find(i => i.itemName.toLowerCase() === itemName.toLowerCase());
+            if (!item) {
+                return { valid: false, message: 'Item name not found. Please select from the list.' };
+            }
+            return { valid: true, item };
+        }
+        
+        function showFieldError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else {
+                // Create error div if it doesn't exist
+                const error = document.createElement('div');
+                error.id = fieldId + 'Error';
+                error.className = 'field-error';
+                error.textContent = message;
+                error.style.color = '#dc3545';
+                error.style.fontSize = '12px';
+                error.style.marginTop = '2px';
+                field.parentNode.insertBefore(error, field.nextSibling);
+            }
+            
+            field.style.borderColor = '#dc3545';
+        }
+        
+        function clearFieldError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            
+            field.style.borderColor = '';
+        }
+        function formatTs(ts) {
+            if (!ts) return '';
+            try { const d = new Date(ts); return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`; } catch { return ''; }
+        }
+
+        function renderSearchPanel(title, items, formatter, onSelect, metaKey) {
+            const panel = document.getElementById('searchPanel');
+            const titleEl = document.getElementById('searchPanelTitle');
+            const metaEl = document.getElementById('searchPanelMeta');
+            const refreshBtn = document.getElementById('searchPanelRefresh');
+            const hintEl = document.getElementById('searchPanelHint');
+            const list = document.getElementById('searchPanelList');
+            titleEl.textContent = title;
+            const cache = getCache(metaKey);
+            metaEl.textContent = cache && cache.lastFetched ? `Last fetched: ${formatTs(cache.lastFetched)}` : '';
+            list.innerHTML = '';
+            items.forEach((it, idx) => {
+                const li = document.createElement('li');
+                li.className = 'right-search-item';
+                li.tabIndex = 0;
+                li.dataset.index = String(idx);
+                li.innerHTML = formatter(it);
+                li.addEventListener('click', () => { onSelect(it); });
+                li.addEventListener('keydown', (ev) => {
+                    if (ev.key === 'Enter') { ev.preventDefault(); onSelect(it); }
+                    if (ev.key === 'ArrowDown') {
+                        ev.preventDefault(); const next = li.nextElementSibling; if (next) next.focus();
+                    }
+                    if (ev.key === 'ArrowUp') {
+                        ev.preventDefault(); const prev = li.previousElementSibling; if (prev) prev.focus();
+                    }
+                });
+                list.appendChild(li);
+            });
+            panel.classList.add('show');
+            // Keep focus in the input by default; ArrowDown will move focus into the list
+
+            // Show new day hint if applicable
+            hintEl.style.display = 'none';
+            const last = cache && cache.lastFetched ? new Date(cache.lastFetched) : null;
+            const now = new Date();
+            if (!last || last.toDateString() !== now.toDateString()) {
+                hintEl.textContent = 'Data may be from a previous day. Click refresh to fetch today\'s data.';
+                hintEl.style.display = 'inline-block';
+                setTimeout(() => { hintEl.style.display = 'none'; }, 4000);
+            }
+
+            // Wire refresh
+            refreshBtn.onclick = async () => {
+                if (title.includes('Party')) {
+                    await refreshParties();
+                } else {
+                    await refreshItems();
+                }
+                hideSearchPanel();
+            };
+        }
+
+        async function refreshParties() {
+            try {
+                const qParties = query(collection(db, 'partymaster'), orderBy('partyName'));
+                const snap = await getDocs(qParties);
+                const fresh = [];
+                snap.forEach(d => { const p = d.data(); fresh.push({ id: d.id, partyName: p.partyName, partyId: p.partyId, contactPerson: p.contactPerson, phoneNumber: p.phoneNumber, address: p.address, partyType: p.partyType }); });
+                partyArray = fresh;
+                setCache('cache_partymaster', { lastFetched: Date.now(), items: partyArray });
+            } catch (e) { console.error('refreshParties error', e); }
+        }
+
+        async function refreshItems() {
+            try {
+                const qItems = query(collection(db, 'itemmaster'), orderBy('itemName'));
+                const snap = await getDocs(qItems);
+                const fresh = [];
+                snap.forEach(d => { const it = d.data(); fresh.push({ id: d.id, itemName: it.itemName, itemCode: it.serialNo, unit: it.unit, itemType: it.itemType }); });
+                itemsArray = fresh;
+                setCache('cache_itemmaster', { lastFetched: Date.now(), items: itemsArray });
+            } catch (e) { console.error('refreshItems error', e); }
+        }
+
+        function hideSearchPanel() {
+            const panel = document.getElementById('searchPanel');
+            panel.classList.remove('show');
+        }
+
+        // Single global click handler to avoid flicker
+        document.addEventListener('mousedown', (e) => {
+            const panel = document.getElementById('searchPanel');
+            const partyInput = document.getElementById('partyName');
+            const itemInput = document.getElementById('itemName');
+            const clickedInsideInputs = (partyInput && partyInput.contains(e.target)) || itemInput.contains(e.target);
+            const clickedInsidePanel = panel.contains(e.target);
+            if (!clickedInsideInputs && !clickedInsidePanel) {
+                hideSearchPanel();
+            }
+        });
+
+        function focusNextField(currentId) {
+            const form = document.getElementById('receiveForm');
+            const focusables = Array.from(form.querySelectorAll('input, select, textarea, button'))
+                .filter(el => !el.disabled && el.type !== 'hidden');
+            const idx = focusables.findIndex(el => el.id === currentId);
+            if (idx >= 0 && idx + 1 < focusables.length) {
+                focusables[idx + 1].focus();
+            }
+        }
+
+        function setupTypeahead({ inputId, source, title, formatter, onPick }) {
+            const input = document.getElementById(inputId);
+            async function ensureDatasetLoaded() {
+                const isParty = title.includes('Party');
+                const arr = source();
+                if (!arr || arr.length === 0) {
+                    if (isParty) { await refreshParties(); }
+                    else { await refreshItems(); }
+                }
+            }
+            input.addEventListener('mousedown', (e) => {
+                // prevent blur during click
+                e.preventDefault();
+                input.focus();
+            });
+            input.addEventListener('focus', async () => {
+                await ensureDatasetLoaded();
+                const arr = source();
+                if (arr && arr.length) {
+                    const initial = arr.slice(0, 200);
+                    renderSearchPanel(title, initial, (x) => formatter(x), (picked) => {
+                        onPick(picked);
+                        hideSearchPanel();
+                        focusNextField(inputId);
+                    }, title.includes('Party') ? 'cache_partymaster' : 'cache_itemmaster');
+                }
+            });
+            input.addEventListener('input', () => {
+                const q = input.value.trim().toLowerCase();
+                const arr = source();
+                let matches;
+                if (q.length < 3) {
+                    matches = (arr || []).slice(0, 200);
+                } else {
+                    matches = (arr || []).filter(x => formatter(x).toLowerCase().includes(q)).slice(0, 200);
+                }
+                if (!matches || matches.length === 0) { hideSearchPanel(); return; }
+                renderSearchPanel(title, matches, (x) => formatter(x), (picked) => {
+                    onPick(picked);
+                    hideSearchPanel();
+                    focusNextField(inputId);
+                }, title.includes('Party') ? 'cache_partymaster' : 'cache_itemmaster');
+            });
+            input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'ArrowDown') {
+                    const first = document.querySelector('#searchPanelList .right-search-item');
+                    if (first) { ev.preventDefault(); document.getElementById('searchPanel').classList.add('show'); first.focus(); }
+                }
+            });
+            // Do not attach per-input global hide handlers anymore; a single global handler is defined below
+        }
+
+        // Setup search listeners
+        function setupSearchListeners() {
+
+            // Main search button click
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                // Update current filters from form values
+                currentFilters.partyName = document.getElementById('searchPartyName').value.toLowerCase();
+                currentFilters.itemName = document.getElementById('searchItemName').value.toLowerCase();
+                currentFilters.serialNo = document.getElementById('searchSerialNo').value.toLowerCase();
+                currentFilters.itemType = document.getElementById('searchItemType').value;
+                currentFilters.fromDate = document.getElementById('searchFromDate').value;
+                currentFilters.toDate = document.getElementById('searchToDate').value;
+                currentFilters.guarantee = document.getElementById('searchGuarantee').value;
+                
+                // Reset pagination and load purchases
+                hasMore = true;
+                lastVisible = null;
+                loadPurchases(true);
+            });
+
+            // Refresh button click
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                // Reset all filters to default values
+                currentFilters = {
+                    partyName: '',
+                    itemName: '',
+                    serialNo: '',
+                    itemType: '',
+                    fromDate: '',
+                    toDate: '',
+                    guarantee: ''
+                };
+                
+                // Reset form values
+                document.getElementById('searchPartyName').value = '';
+                document.getElementById('searchItemName').value = '';
+                document.getElementById('searchSerialNo').value = '';
+                document.getElementById('searchItemType').value = '';
+                document.getElementById('searchFromDate').value = '';
+                document.getElementById('searchToDate').value = '';
+                document.getElementById('searchGuarantee').value = '';
+                
+                // Reset pagination and load purchases
+                hasMore = true;
+                lastVisible = null;
+                loadPurchases(true);
+                
+                showNotification('Filters reset and data refreshed!');
+            });
+
+            // Download Excel button
+            document.getElementById('downloadExcelBtn').addEventListener('click', function() {
+                downloadExcelData();
+            });
+        }
+
+        // Load purchases with pagination and filters
+        async function loadPurchases(reset = false) {
+            if (isLoading || (!hasMore && !reset)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                
+                let qPurchases = query(collection(db, 'receive'), orderBy('createdAt', 'desc'), qLimit(pageSize));
+                if (!reset && lastVisible) {
+                    qPurchases = query(collection(db, 'receive'), orderBy('createdAt', 'desc'), qStartAfter(lastVisible), qLimit(pageSize));
+                }
+
+                const snapshot = await getDocs(qPurchases);
+                
+                if (snapshot.empty) {
+                    hasMore = false;
+                    document.getElementById('noMore').style.display = 'block';
+                    return;
+                }
+
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                const tbody = document.getElementById('purchaseTable');
+                
+                if (reset) {
+                    tbody.innerHTML = '';
+                }
+
+                let filteredPurchases = [];
+                
+                snapshot.forEach(docSnap => {
+                    const purchase = docSnap.data();
+                    purchase.id = docSnap.id;
+                    
+                    // Apply filters
+                    let matches = true;
+                    
+                    if (currentFilters.partyName && !purchase.partyName.toLowerCase().includes(currentFilters.partyName)) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.itemName && !purchase.itemName.toLowerCase().includes(currentFilters.itemName)) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.serialNo && !purchase.serialNo.toLowerCase().includes(currentFilters.serialNo)) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.itemType && purchase.itemType !== currentFilters.itemType) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.fromDate && purchase.receiveDate < currentFilters.fromDate) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.toDate && purchase.receiveDate > currentFilters.toDate) {
+                        matches = false;
+                    }
+                    
+                    if (currentFilters.guarantee !== '') {
+                        const hasGuarantee = purchase.hasGuarantee === true;
+                        if (currentFilters.guarantee === 'true' && !hasGuarantee) {
+                            matches = false;
+                        }
+                        if (currentFilters.guarantee === 'false' && hasGuarantee) {
+                            matches = false;
+                        }
+                    }
+                    
+                    if (matches) {
+                        filteredPurchases.push(purchase);
+                    }
+                });
+
+                if (reset && filteredPurchases.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 20px;">No purchases found</td></tr>';
+                } else {
+                    filteredPurchases.forEach(purchase => {
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', purchase.id);
+                        tr.innerHTML = `
+                            <td>${purchase.partyName || ''}</td>
+                            <td>${purchase.receiveDate || ''}</td>
+                            <td>${purchase.itemName || ''}</td>
+                            <td>${purchase.itemCode || ''}</td>
+                            <td>${purchase.serialNo || ''}</td>
+                            <td>${purchase.quantity || ''}</td>
+                            <td>${purchase.itemType || ''}</td>
+                            <td>${purchase.hasGuarantee ? `${purchase.guaranteeMonths || 0} months` : 'No'}</td>
+                            <td>${purchase.imageUrl ? '<img src="' + purchase.imageUrl + '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">' : 'No Image'}</td>
+                            <td>${purchase.remarks || ''}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="editPurchase('${purchase.id}')" title="Edit">✏️</button>
+                                <button class="action-btn delete-btn" onclick="deletePurchase('${purchase.id}')" title="Delete">🗑️</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading purchases:', error);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Infinite scroll
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadPurchases();
+            }
+        });
+
+        // Image handling functions
+        window.openImageModal = function() {
+            document.getElementById('imageModal').style.display = 'block';
+        }
+
+        window.closeImageModal = function() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        window.captureImage = function() {
+            closeImageModal();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            input.onchange = function(e) {
+                handleImageFile(e.target.files[0]);
+            };
+            input.click();
+        }
+
+        window.selectFromGallery = function() {
+            closeImageModal();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                handleImageFile(e.target.files[0]);
+            };
+            input.click();
+        }
+
+        function handleImageFile(file) {
+            if (file) {
+                selectedImageFile = file;
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Upload image to Firebase Storage
+        async function uploadImage() {
+            if (!selectedImageFile) return null;
+
+            try {
+                const fileName = `receive_${Date.now()}_${selectedImageFile.name}`;
+                const fileRef = storageRef(storage, `invabrar/receives/${fileName}`);
+                await uploadBytes(fileRef, selectedImageFile);
+                const downloadURL = await getDownloadURL(fileRef);
+                return downloadURL;
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                showNotification('Error uploading image. Please try again.', 'error');
+                return null;
+            }
+        }
+
+        // Edit purchase
+        window.editPurchase = async function(docId) {
+            try {
+                const docRef = doc(db, 'receive', docId);
+                const docSnap = await getDoc(docRef);
+
+                const purchase = docSnap.data();
+                
+                // Fill the form with purchase data
+                document.getElementById('partyName').value = purchase.partyName || '';
+                document.getElementById('receiveDate').value = purchase.receiveDate || '';
+                document.getElementById('itemName').value = purchase.itemName || '';
+                document.getElementById('itemCode').value = purchase.itemCode || '';
+                document.getElementById('serialNo').value = purchase.serialNo || '';
+                document.getElementById('quantity').value = purchase.quantity || '';
+                document.getElementById('itemType').value = purchase.itemType || '';
+                document.getElementById('guaranteeCheckbox').checked = purchase.hasGuarantee || false;
+                document.getElementById('guaranteeMonthsInput').value = purchase.guaranteeMonths || '';
+                document.getElementById('remarks').value = purchase.remarks || '';
+
+                // Show guarantee months input if guarantee is checked
+                if (purchase.hasGuarantee) {
+                    document.getElementById('guaranteeMonths').classList.add('show');
+                }
+
+                // Show existing image if available
+                if (purchase.imageUrl) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = purchase.imageUrl;
+                    preview.style.display = 'block';
+                }
+
+                // Store the document ID for update
+                document.getElementById('receiveForm').dataset.editId = docId;
+                
+                // Change button text
+                document.getElementById('submitBtn').textContent = 'Update Receive';
+                
+                // Switch to form tab
+                window.switchTab('form');
+            } catch (error) {
+                console.error('Error loading receive:', error);
+                showNotification('Error loading receive details. Please try again.', 'error');
+            }
+        }
+
+        // Delete purchase
+        window.deletePurchase = async function(docId) {
+            if (!confirm('Are you sure you want to delete this receive?')) {
+                return;
+            }
+
+            try {
+                const docRef = doc(db, 'receive', docId);
+                console.log(`[Receive] DELETE → database: '${getDatabaseName()}', path: '${docRef.path}'`);
+                
+                // Fetch doc to get image URL BEFORE deleting
+                const snap = await getDoc(docRef);
+                const data = snap.exists() ? snap.data() : null;
+                
+                // Delete the document first
+                await deleteDoc(docRef);
+
+                // Delete associated image if stored
+                if (data && data.imageUrl) {
+                    try {
+                        console.log(`[Receive] Attempting to delete image: ${data.imageUrl}`);
+                        
+                        // Extract the storage path from the download URL
+                        const url = new URL(data.imageUrl);
+                        console.log(`[Receive] Parsed URL:`, url);
+                        
+                        // Firebase Storage URLs have the format: https://firebasestorage.googleapis.com/v0/b/bucket/o/path%2Fto%2Ffile
+                        // We need to extract the path after '/o/' and decode it
+                        const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+                        if (pathMatch) {
+                            const encodedPath = pathMatch[1];
+                            const decodedPath = decodeURIComponent(encodedPath);
+                            console.log(`[Receive] Decoded storage path: ${decodedPath}`);
+                            
+                            const imgRef = storageRef(storage, decodedPath);
+                            await deleteObject(imgRef);
+                            console.log(`[Receive] Image successfully deleted from storage: ${decodedPath}`);
+                        } else {
+                            console.warn(`[Receive] Could not extract path from URL: ${data.imageUrl}`);
+                        }
+                    } catch (imgErr) {
+                        console.error('Failed to delete image from storage:', imgErr);
+                        console.error('Image URL was:', data.imageUrl);
+                    }
+                }
+
+                showNotification('Receive deleted successfully!');
+                const row = document.querySelector(`tr[data-id='${docId}']`);
+                if (row) { row.remove(); }
+                hasMore = true; lastVisible = null; document.getElementById('noMore').style.display = 'none';
+                loadPurchases(true);
+            } catch (error) {
+                console.error('Error deleting receive:', error);
+                showNotification('Error deleting receive. Please try again.', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Download Excel data function
+        async function downloadExcelData() {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+                showNotification('Excel library not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+
+            const downloadBtn = document.getElementById('downloadExcelBtn');
+            const originalText = downloadBtn.textContent;
+            
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = '⏳ Loading...';
+                
+                // Get all purchases
+                const snapshot = await getDocs(query(collection(db, 'receive'), orderBy('createdAt', 'desc')));
+                
+                if (snapshot.empty) {
+                    showNotification('No data found for download.', 'error');
+                    return;
+                }
+
+                console.log(`Found ${snapshot.size} records for Excel download`);
+
+                // Prepare data for Excel
+                const excelData = [];
+                const headers = [
+                    'Party Name', 'Purchase Date', 'Item Name', 'Item Code', 'Serial No.', 
+                    'Quantity', 'Type', 'Has Guarantee', 'Guarantee Months', 'Remarks', 'Created Date'
+                ];
+                excelData.push(headers);
+
+                snapshot.forEach(doc => {
+                    const purchase = doc.data();
+                    const row = [
+                        purchase.partyName || '',
+                        purchase.purchaseDate || '',
+                        purchase.itemName || '',
+                        purchase.itemCode || '',
+                        purchase.serialNo || '',
+                        purchase.quantity || '',
+                        purchase.itemType || '',
+                        purchase.hasGuarantee ? 'Yes' : 'No',
+                        purchase.guaranteeMonths || '',
+                        purchase.remarks || '',
+                        purchase.createdAt ? purchase.createdAt.toDate().toLocaleDateString() : ''
+                    ];
+                    excelData.push(row);
+                });
+
+                // Generate Excel file
+                const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Receives');
+
+                // Auto-size columns
+                const columnWidths = headers.map(header => ({ wch: Math.max(header.length, 15) }));
+                worksheet['!cols'] = columnWidths;
+
+                // Generate filename
+                const filename = `receives_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+                // Download the file
+                XLSX.writeFile(workbook, filename);
+                showNotification(`Excel file downloaded successfully! (${snapshot.size} records)`);
+
+            } catch (error) {
+                console.error('Error downloading Excel:', error);
+                showNotification('Error downloading Excel file. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = originalText;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('guaranteeCheckbox').addEventListener('change', function() {
+            const guaranteeMonths = document.getElementById('guaranteeMonths');
+            if (this.checked) {
+                guaranteeMonths.classList.add('show');
+            } else {
+                guaranteeMonths.classList.remove('show');
+                document.getElementById('guaranteeMonthsInput').value = '';
+            }
+        });
+        
+        // Clear errors when user starts typing
+        document.getElementById('partyName').addEventListener('input', function() {
+            clearFieldError('partyName');
+        });
+        
+        document.getElementById('itemName').addEventListener('input', function() {
+            clearFieldError('itemName');
+        });
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('receiveForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('receiveDate').value = today;
+            document.getElementById('guaranteeMonths').classList.remove('show');
+            
+            // Hide image preview
+            document.getElementById('imagePreview').style.display = 'none';
+            selectedImageFile = null;
+            
+            // Clear any field errors
+            clearFieldError('partyName');
+            clearFieldError('itemName');
+            
+            // Reset button text and remove edit ID
+            document.getElementById('submitBtn').textContent = 'Save Receive';
+            delete document.getElementById('receiveForm').dataset.editId;
+        }
+
+        // Stock management functions (copied from itemmaster for receive form)
+        async function updateItemStock(itemDocId, itemCode, quantity, operation, formName) {
+            try {
+                // Find item by docId or itemCode
+                let itemRef = null;
+                let itemData = null;
+                
+                if (itemDocId) {
+                    // Try by docId first
+                    const docRef = doc(db, 'itemmaster', itemDocId);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        itemRef = docRef;
+                        itemData = docSnap.data();
+                    }
+                }
+                
+                if (!itemRef && itemCode) {
+                    // Try by itemCode (serialNo)
+                    const q = query(collection(db, 'itemmaster'), where('serialNo', '==', itemCode));
+                    const snapshot = await getDocs(q);
+                    if (!snapshot.empty) {
+                        const docSnap = snapshot.docs[0];
+                        itemRef = doc(db, 'itemmaster', docSnap.id);
+                        itemData = docSnap.data();
+                    }
+                }
+                
+                if (!itemRef || !itemData) {
+                    console.error('Item not found for stock update:', { itemDocId, itemCode });
+                    return false;
+                }
+                
+                const currentStock = itemData.currentStock || 0;
+                let newStock = currentStock;
+                
+                if (operation === 'add') {
+                    newStock = currentStock + quantity;
+                } else if (operation === 'subtract') {
+                    newStock = Math.max(0, currentStock - quantity);
+                }
+                
+                // Update the item's current stock
+                await updateDoc(itemRef, {
+                    currentStock: newStock,
+                    updatedAt: new Date()
+                });
+                
+                // Log the stock change
+                await logStockChange({
+                    itemName: itemData.itemName,
+                    itemCode: itemData.serialNo,
+                    operation: operation,
+                    quantity: quantity,
+                    previousStock: currentStock,
+                    newStock: newStock,
+                    formName: formName,
+                    timestamp: new Date()
+                });
+                
+                console.log(`Stock updated for ${itemData.itemName}: ${currentStock} -> ${newStock} (${operation} ${quantity})`);
+                return true;
+                
+            } catch (error) {
+                console.error('Error updating item stock:', error);
+                return false;
+            }
+        }
+        
+        async function logStockChange(logData) {
+            try {
+                const colRef = collection(db, 'logger');
+                await addDoc(colRef, logData);
+                console.log('Stock change logged:', logData);
+            } catch (error) {
+                console.error('Error logging stock change:', error);
+            }
+        }
+
+        // Form submission
+        document.getElementById('receiveForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = localStorage.getItem('userId');
+            
+            // Clear any previous errors
+            clearFieldError('partyName');
+            clearFieldError('itemName');
+
+            try {
+                // Validate party name if provided
+                const partyName = document.getElementById('partyName').value.trim();
+                if (partyName) {
+                    const partyValidation = validatePartyName(partyName);
+                    if (!partyValidation.valid) {
+                        showFieldError('partyName', partyValidation.message);
+                        return;
+                    }
+                }
+                
+                // Validate item name if provided
+                const itemName = document.getElementById('itemName').value.trim();
+                if (itemName) {
+                    const itemValidation = validateItemName(itemName);
+                    if (!itemValidation.valid) {
+                        showFieldError('itemName', itemValidation.message);
+                        return;
+                    }
+                }
+
+                // Upload image if selected
+                let imageUrl = null;
+                if (selectedImageFile) {
+                    imageUrl = await uploadImage();
+                    if (!imageUrl) {
+                        showNotification('Error uploading image. Please try again.', 'error');
+                        return;
+                    }
+                }
+
+                const purchaseData = {
+                    receiveDate: document.getElementById('receiveDate').value,
+                    partyName: document.getElementById('partyName').value,
+                    partyDocId: document.getElementById('partyDocId').value,
+                    partyCode: document.getElementById('partyCodeHidden').value,
+                    itemName: document.getElementById('itemName').value,
+                    itemCode: document.getElementById('itemCode').value,
+                    itemDocId: document.getElementById('itemDocId').value,
+                    itemId: document.getElementById('itemIdHidden').value,
+                    serialNo: document.getElementById('serialNo').value,
+                    quantity: parseInt(document.getElementById('quantity').value) || 1,
+                    itemType: document.getElementById('itemType').value,
+                    hasGuarantee: document.getElementById('guaranteeCheckbox').checked,
+                    guaranteeMonths: document.getElementById('guaranteeCheckbox').checked ? 
+                        parseInt(document.getElementById('guaranteeMonthsInput').value) || 0 : 0,
+                    remarks: document.getElementById('remarks').value,
+                    updatedAt: new Date()
+                };
+
+                // Add image URL if available
+                if (imageUrl) {
+                    purchaseData.imageUrl = imageUrl;
+                }
+
+                const editId = this.dataset.editId;
+                if (editId) {
+                    // Update existing purchase
+                    const docRef = doc(db, 'receive', editId);
+                    console.log(`[Receive] UPDATE → database: '${getDatabaseName()}', path: '${docRef.path}'`);
+                    await updateDoc(docRef, purchaseData);
+                    showNotification('Receive updated successfully!');
+                } else {
+                    // Create new purchase
+                    purchaseData.createdBy = userId;
+                    purchaseData.createdAt = new Date();
+                    const colRef = collection(db, 'receive');
+                    console.log(`[Receive] ADD → database: '${getDatabaseName()}', path: '${colRef.path}'`);
+                    await addDoc(colRef, purchaseData);
+                    
+                    // Update item stock
+                    const itemDocId = document.getElementById('itemDocId').value;
+                    const itemCode = document.getElementById('itemCode').value;
+                    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+                    
+                    if (itemDocId || itemCode) {
+                        try {
+                            await updateItemStock(itemDocId, itemCode, quantity, 'add', 'receive');
+                            console.log('Stock updated for received item');
+                        } catch (stockError) {
+                            console.error('Error updating stock:', stockError);
+                            // Don't fail the entire operation if stock update fails
+                        }
+                    }
+                    
+                    showNotification('Receive saved successfully!');
+                }
+
+                resetForm();
+                if (editId) {
+                    loadPurchases(true); // Refresh the list if editing
+                }
+            } catch (error) {
+                console.error('Error saving receive:', error);
+                showNotification('Error saving receive. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

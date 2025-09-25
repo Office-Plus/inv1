@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Inventory Manager Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .google-btn {
+            background-color: white;
+            color: #757575;
+            border: 1px solid #ddd;
+            padding: 12px 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin: 20px 0;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .google-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .or-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .or-divider::before { left: 0; }
+        .or-divider::after { right: 0; }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .login-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #45a049;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .version {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span style="font-family: 'Arial', sans-serif; font-size: 32px; font-weight: bold; background: linear-gradient(45deg, #2196F3, #4CAF50); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Inventory Manager</span>
+        </div>
+        <h1>Login to Admin</h1>
+        
+        <button class="google-btn" onclick="signInWithGoogle()">
+            <span style="font-family: 'Arial', sans-serif; font-size: 20px; font-weight: bold; color: #4285F4;">G</span>
+            Sign in with Google
+        </button>
+        
+        <div class="or-divider">OR</div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        <div class="register-link">
+            Don't have an account? <a href="register.html">Register</a>
+        </div>
+        <div class="version">(Version <span id="appVersion">Loading...</span>)</div>
+    </div>
+
+    <script src="version-config.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app, 'invabrar');
+        const provider = new GoogleAuthProvider();
+
+        // Update version display
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionSpan = document.getElementById('appVersion');
+            if (versionSpan && window.APP_VERSION) {
+                versionSpan.textContent = window.APP_VERSION;
+            }
+        });
+
+        // Function to fetch user data from Firestore and save to localStorage
+        async function fetchAndSaveUserData(user) {
+            try {
+                // Query users collection to find user by email
+                const usersCollection = collection(db, 'users');
+                const q = query(usersCollection, where('email', '==', user.email));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    // User found in Firestore
+                    const userDoc = querySnapshot.docs[0];
+                    const userData = userDoc.data();
+                    
+                    // Save all user data to localStorage
+                    localStorage.setItem('userEmail', user.email);
+                    localStorage.setItem('userId', user.uid);
+                    localStorage.setItem('userlevel', userData.userlevel || '');
+                    localStorage.setItem('userRights', userData.rights || '');
+                    localStorage.setItem('companyCode', userData.companyCode || '');
+                    
+                    console.log('User data loaded from Firestore:', userData);
+                    return true;
+                } else {
+                    // User not found in Firestore - might be a Google user without Firestore record
+                    console.log('User not found in Firestore, using basic data');
+                    localStorage.setItem('userEmail', user.email);
+                    localStorage.setItem('userId', user.uid);
+                    localStorage.setItem('userlevel', '');
+                    localStorage.setItem('userRights', '');
+                    localStorage.setItem('companyCode', '');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Fallback to basic data
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userId', user.uid);
+                localStorage.setItem('userlevel', '');
+                localStorage.setItem('userRights', '');
+                localStorage.setItem('companyCode', '');
+                return false;
+            }
+        }
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userEmail = localStorage.getItem('userEmail');
+                const userId = localStorage.getItem('userId');
+                if (userEmail && userId) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // If no login data in localStorage, sign out the user
+                    auth.signOut();
+                }
+            }
+        });
+
+        // Email/Password login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Fetch user data from Firestore and save to localStorage
+                await fetchAndSaveUserData(user);
+                
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error during login:", error);
+                let errorMessage = "Error signing in. Please check your credentials and try again.";
+                
+                // Handle specific Firebase Auth errors
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = "No account found with this email address.";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = "Incorrect password. Please try again.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Invalid email address.";
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = "Too many failed attempts. Please try again later.";
+                }
+                
+                alert(errorMessage);
+            }
+        });
+
+        // Google Sign In
+        window.signInWithGoogle = async function() {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                // Fetch user data from Firestore and save to localStorage
+                await fetchAndSaveUserData(user);
+                
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error during Google sign in:", error);
+                alert("Error signing in with Google. Please try again.");
+            }
+        };
+        // Removed: rights/companyCode localStorage writes. Only userEmail and userId are saved on login.
+    </script>
+</body>
+</html> 

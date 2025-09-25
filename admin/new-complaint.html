@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Complaint</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f9f9f9;
+            color: #666;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        /* Tab styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+                 /* Search filters */
+         .search-filters {
+             display: grid;
+             grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+             gap: 15px;
+             margin-bottom: 20px;
+             align-items: end;
+         }
+
+         .search-filters input,
+         .search-filters select {
+             width: 100%;
+             padding: 8px;
+             border: 1px solid #ddd;
+             border-radius: 4px;
+             box-sizing: border-box;
+         }
+
+         .search-btn {
+             background: #2196F3;
+             color: white;
+             border: none;
+             padding: 8px 16px;
+             border-radius: 4px;
+             cursor: pointer;
+             font-size: 14px;
+             transition: background-color 0.3s;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 5px;
+         }
+
+         .search-btn:hover {
+             background: #1976D2;
+         }
+
+         .search-btn:disabled {
+             background: #6c757d;
+             cursor: not-allowed;
+         }
+
+         .refresh-btn {
+             background: #ff9800;
+             color: white;
+             border: none;
+             padding: 8px 16px;
+             border-radius: 4px;
+             cursor: pointer;
+             font-size: 14px;
+             transition: background-color 0.3s;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 5px;
+         }
+
+         .refresh-btn:hover {
+             background: #f57c00;
+         }
+
+         .refresh-btn:disabled {
+             background: #6c757d;
+             cursor: not-allowed;
+         }
+
+         .download-excel-btn {
+             background: #28a745;
+             color: white;
+             border: none;
+             padding: 8px 16px;
+             border-radius: 4px;
+             cursor: pointer;
+             font-size: 14px;
+             transition: background-color 0.3s;
+         }
+
+         .download-excel-btn:hover {
+             background: #218838;
+         }
+
+         .download-excel-btn:disabled {
+             background: #6c757d;
+             cursor: not-allowed;
+         }
+
+         /* Mobile responsive for search filters */
+         @media (max-width: 768px) {
+             .search-filters {
+                 grid-template-columns: 1fr;
+                 gap: 10px;
+             }
+         }
+
+         @media (min-width: 769px) and (max-width: 1024px) {
+             .search-filters {
+                 grid-template-columns: 1fr 1fr;
+                 gap: 12px;
+             }
+         }
+
+         @media (min-width: 1025px) and (max-width: 1400px) {
+             .search-filters {
+                 grid-template-columns: 1fr 1fr 1fr 1fr;
+                 gap: 12px;
+             }
+         }
+
+         @media (min-width: 1401px) {
+             .search-filters {
+                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+                 gap: 15px;
+             }
+         }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        /* Status badge */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-closed {
+            background-color: #e8f5e8;
+            color: #388e3c;
+        }
+
+        /* Priority badge */
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .priority-high {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+                 .priority-low {
+             background-color: #f3e5f5;
+             color: #7b1fa2;
+         }
+
+         /* Search job number container and button */
+         .search-job-number-container {
+             position: relative;
+         }
+
+         .search-job-btn {
+             position: absolute;
+             right: 8px;
+             top: 50%;
+             transform: translateY(-50%);
+             background: #2196F3;
+             color: white;
+             border: none;
+             border-radius: 4px;
+             width: 32px;
+             height: 32px;
+             cursor: pointer;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             font-size: 16px;
+             transition: background-color 0.3s;
+         }
+
+         .search-job-btn:hover {
+             background: #1976D2;
+         }
+
+         .search-job-btn:active {
+             background: #0D47A1;
+         }
+
+         /* Adjust input padding to make room for button */
+         .search-job-number-container input {
+             padding-right: 48px;
+         }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>Complaint Management</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit Complaint</button>
+            <button class="tab" onclick="switchTab('list')">Complaint List</button>
+        </div>
+
+        <div id="formTab" class="tab-content active">
+            <div class="form-container">
+                <form id="complaintForm">
+                    <!-- Customer Information Section -->
+                    <div class="section-title">Customer Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerName">Name</label>
+                            <input type="text" id="customerName">
+                        </div>
+                        <div class="form-group">
+                            <label for="complaintDate">Complaint Date</label>
+                            <input type="date" id="complaintDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Describe</label>
+                        <textarea id="description" placeholder="Please describe the complaint in detail..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dealer">Dealer</label>
+                            <input type="text" id="dealer">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="phoneNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="alternateNumber">Alternate Number</label>
+                            <input type="tel" id="alternateNumber">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" placeholder="Enter complete address..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pinCode">Pin Code</label>
+                            <input type="text" id="pinCode" maxlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category">
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Product Information Section -->
+                    <div class="section-title">Product Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="purchaseDate">Purchase Date</label>
+                            <input type="date" id="purchaseDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="underWarranty">Under Warranty</label>
+                            <select id="underWarranty">
+                                <option value="">Select</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <select id="brand">
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemSerialNumber">Item Serial Number</label>
+                            <input type="text" id="itemSerialNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfProducts">No. of Products</label>
+                            <input type="number" id="numberOfProducts" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority">
+                                <option value="Low" selected>Low</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Service Information Section -->
+                    <div class="section-title">Service Information</div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agent">Select Agent <span class="required">*</span></label>
+                            <select id="agent" required>
+                                <option value="">Select Agent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="agentTelegramId">Agent Telegram ID</label>
+                            <input type="text" id="agentTelegramId" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobDate">Job Date</label>
+                            <input type="date" id="jobDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="jobNumber">Job Number</label>
+                            <input type="text" id="jobNumber" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reason">Reason</label>
+                        <textarea id="reason" placeholder="Enter reason for complaint..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Submit Complaint</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+                 <div id="listTab" class="tab-content">
+                              <div class="search-filters">
+                 <div class="search-job-number-container">
+                     <input type="text" id="searchComplaintNo" placeholder="Enter complaint number and press Enter...">
+                     <button type="button" id="searchJobBtn" class="search-job-btn" title="Search">
+                         <span>→</span>
+                     </button>
+                 </div>
+                 <input type="text" id="searchPhoneNumber" placeholder="Search by phone number...">
+                 <select id="searchBrand">
+                     <option value="">All Brands</option>
+                 </select>
+                 <select id="searchStatus">
+                     <option value="Open" selected>Open</option>
+                     <option value="Closed">Closed</option>
+                     <option value="">All Status</option>
+                 </select>
+                 <select id="searchCategory">
+                     <option value="">All Categories</option>
+                 </select>
+                 <select id="searchAgent">
+                     <option value="">All Agents</option>
+                 </select>
+                 <select id="searchMonth">
+                     <option value="">All Months</option>
+                     <option value="01">January</option>
+                     <option value="02">February</option>
+                     <option value="03">March</option>
+                     <option value="04">April</option>
+                     <option value="05">May</option>
+                     <option value="06">June</option>
+                     <option value="07">July</option>
+                     <option value="08">August</option>
+                     <option value="09">September</option>
+                     <option value="10">October</option>
+                     <option value="11">November</option>
+                     <option value="12">December</option>
+                 </select>
+                 <button type="button" id="searchBtn" class="search-btn" title="Search">
+                     🔍 Search
+                 </button>
+                 <button type="button" id="refreshBtn" class="refresh-btn" title="Refresh">
+                     🔄 Refresh
+                 </button>
+                 <button type="button" id="downloadExcelBtn" class="download-excel-btn" title="Download Excel">
+                     📊 Download Excel
+                 </button>
+             </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Phone Number</th>
+                        <th>Dealer</th>
+                        <th>Brand</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Complaint Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="complaintTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading more complaints...</div>
+            <div id="noMore" class="no-more">No more complaints to load</div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+    
+    <!-- Add XLSX library for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Version Management -->
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Load the menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('menuContainer').innerHTML = html;
+                });
+        }
+
+        // Variables for pagination and search
+        let lastVisible = null;
+        let isLoading = false;
+        let hasMore = true;
+        const pageSize = 50;
+        let currentFilters = {
+            phoneNumber: '',
+            brand: '',
+            status: 'Open',
+            category: '',
+            agent: '',
+            month: ''
+        };
+
+        // Load data when the page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load menu first
+            loadMenu();
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('complaintDate').value = today;
+            document.getElementById('jobDate').value = today;
+            
+            // Load dropdown data
+            await Promise.all([
+                loadCategories(),
+                loadBrands(),
+                loadAgents()
+            ]);
+
+            // Add search event listeners
+            setupSearchListeners();
+            
+            // Check for updates
+            if (window.VersionManager) {
+                VersionManager.checkForUpdates();
+            }
+        });
+
+        // Toggle menu function (fallback)
+        window.toggleMenu = function() {
+            const menu = document.querySelector('.side-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        };
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadComplaints(true);
+            }
+        }
+
+                 // Setup search listeners
+         function setupSearchListeners() {
+             // Complaint number search (Enter key)
+             document.getElementById('searchComplaintNo').addEventListener('keypress', function(e) {
+                 if (e.key === 'Enter') {
+                     e.preventDefault();
+                     const complaintNo = this.value.trim();
+                     if (complaintNo) {
+                         searchByComplaintNo(complaintNo);
+                     }
+                 }
+             });
+
+             // Search button click for complaint number
+             document.getElementById('searchJobBtn').addEventListener('click', function() {
+                 const complaintNo = document.getElementById('searchComplaintNo').value.trim();
+                 if (complaintNo) {
+                     searchByComplaintNo(complaintNo);
+                 }
+             });
+
+                           // Main search button click
+              document.getElementById('searchBtn').addEventListener('click', function() {
+                  // Update current filters from form values
+                  currentFilters.phoneNumber = document.getElementById('searchPhoneNumber').value.toLowerCase();
+                  currentFilters.brand = document.getElementById('searchBrand').value;
+                  currentFilters.status = document.getElementById('searchStatus').value;
+                  currentFilters.category = document.getElementById('searchCategory').value;
+                  currentFilters.agent = document.getElementById('searchAgent').value;
+                  currentFilters.month = document.getElementById('searchMonth').value;
+                  
+                  // Reset pagination and load complaints
+                  hasMore = true;
+                  lastVisible = null;
+                  loadComplaints(true);
+              });
+
+              // Refresh button click
+              document.getElementById('refreshBtn').addEventListener('click', function() {
+                  // Reset all filters to default values
+                  currentFilters = {
+                      phoneNumber: '',
+                      brand: '',
+                      status: 'Open',
+                      category: '',
+                      agent: '',
+                      month: ''
+                  };
+                  
+                  // Reset form values
+                  document.getElementById('searchComplaintNo').value = '';
+                  document.getElementById('searchPhoneNumber').value = '';
+                  document.getElementById('searchBrand').value = '';
+                  document.getElementById('searchStatus').value = 'Open';
+                  document.getElementById('searchCategory').value = '';
+                  document.getElementById('searchAgent').value = '';
+                  document.getElementById('searchMonth').value = '';
+                  
+                  // Reset pagination and load complaints
+                  hasMore = true;
+                  lastVisible = null;
+                  loadComplaints(true);
+                  
+                  showNotification('Filters reset and data refreshed!');
+              });
+
+              // Download Excel button
+              document.getElementById('downloadExcelBtn').addEventListener('click', function() {
+                  downloadExcelData();
+              });
+         }
+
+        // Search by complaint job number
+        async function searchByComplaintNo(jobNumber) {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+                
+                // Clear the table first
+                const tbody = document.getElementById('complaintTable');
+                tbody.innerHTML = '';
+                
+                // Show loading
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('noMore').style.display = 'none';
+
+                // Search for the specific complaint by jobNumber field
+                const snapshot = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('complaints')
+                    .collection('complaints-coll')
+                    .where('companyCode', '==', companyCode)
+                    .where('jobNumber', '==', jobNumber)
+                    .get();
+
+                if (!snapshot.empty) {
+                    const doc = snapshot.docs[0];
+                    const complaint = doc.data();
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${complaint.customerName || ''}</td>
+                        <td>${complaint.phoneNumber || ''}</td>
+                        <td>${complaint.dealer || ''}</td>
+                        <td>${complaint.brand || ''}</td>
+                        <td>${complaint.category || ''}</td>
+                        <td><span class="priority-badge priority-${complaint.priority?.toLowerCase() || 'low'}">${complaint.priority || 'Low'}</span></td>
+                        <td><span class="status-badge status-${complaint.status?.toLowerCase() || 'open'}">${complaint.status || 'Open'}</span></td>
+                        <td>${complaint.complaintDate || ''}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editComplaint('${doc.id}')" title="Edit">✏️</button>
+                            <button class="action-btn delete-btn" onclick="deleteComplaint('${doc.id}')" title="Delete">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                    showNotification(`Found complaint with Job Number: ${jobNumber}`);
+                } else {
+                    showNotification('Complaint with this Job Number not found.', 'error');
+                }
+            } catch (error) {
+                console.error('Error searching by job number:', error);
+                showNotification('Error searching for complaint. Please try again.', 'error');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Debounce function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func.apply(this, args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Load complaints with pagination and filters
+        async function loadComplaints(reset = false) {
+            if (isLoading || (!hasMore && !reset)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                
+                const companyCode = localStorage.getItem('companyCode');
+
+                let query = db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('complaints')
+                    .collection('complaints-coll')
+                    .where('companyCode', '==', companyCode);
+
+                // Apply status filter first (required for Firestore)
+                if (currentFilters.status) {
+                    query = query.where('status', '==', currentFilters.status);
+                }
+
+                // Apply phone number filter if provided
+                if (currentFilters.phoneNumber) {
+                    query = query.where('phoneNumber', '>=', currentFilters.phoneNumber)
+                               .where('phoneNumber', '<=', currentFilters.phoneNumber + '\uf8ff');
+                }
+
+                // Apply brand filter if provided
+                if (currentFilters.brand) {
+                    query = query.where('brand', '==', currentFilters.brand);
+                }
+
+                // Apply category filter if provided
+                if (currentFilters.category) {
+                    query = query.where('category', '==', currentFilters.category);
+                }
+
+                // Apply agent filter if provided
+                if (currentFilters.agent) {
+                    query = query.where('agentId', '==', currentFilters.agent);
+                }
+
+                // Apply month filter if provided
+                if (currentFilters.month) {
+                    const currentYear = new Date().getFullYear();
+                    const startDate = `${currentYear}-${currentFilters.month}-01`;
+                    const endDate = `${currentYear}-${currentFilters.month}-31`;
+                    query = query.where('complaintDate', '>=', startDate)
+                               .where('complaintDate', '<=', endDate);
+                }
+
+                // Add ordering and pagination
+                query = query.orderBy('createdAt', 'desc').limit(pageSize);
+
+                if (!reset && lastVisible) {
+                    query = query.startAfter(lastVisible);
+                }
+
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    hasMore = false;
+                    document.getElementById('noMore').style.display = 'block';
+                    return;
+                }
+
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                const tbody = document.getElementById('complaintTable');
+                
+                if (reset) {
+                    tbody.innerHTML = '';
+                }
+
+                snapshot.forEach(doc => {
+                    const complaint = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${complaint.customerName || ''}</td>
+                        <td>${complaint.phoneNumber || ''}</td>
+                        <td>${complaint.dealer || ''}</td>
+                        <td>${complaint.brand || ''}</td>
+                        <td>${complaint.category || ''}</td>
+                        <td><span class="priority-badge priority-${complaint.priority?.toLowerCase() || 'low'}">${complaint.priority || 'Low'}</span></td>
+                        <td><span class="status-badge status-${complaint.status?.toLowerCase() || 'open'}">${complaint.status || 'Open'}</span></td>
+                        <td>${complaint.complaintDate || ''}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editComplaint('${doc.id}')" title="Edit">✏️</button>
+                            <button class="action-btn delete-btn" onclick="deleteComplaint('${doc.id}')" title="Delete">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading complaints:', error);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Infinite scroll
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadComplaints();
+            }
+        });
+
+        // Edit complaint
+        async function editComplaint(docId) {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+
+                const doc = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('complaints')
+                    .collection('complaints-coll')
+                    .doc(docId)
+                    .get();
+
+                const complaint = doc.data();
+                
+                // Fill the form with complaint data
+                document.getElementById('customerName').value = complaint.customerName || '';
+                document.getElementById('complaintDate').value = complaint.complaintDate || '';
+                document.getElementById('description').value = complaint.description || '';
+                document.getElementById('dealer').value = complaint.dealer || '';
+                document.getElementById('phoneNumber').value = complaint.phoneNumber || '';
+                document.getElementById('alternateNumber').value = complaint.alternateNumber || '';
+                document.getElementById('email').value = complaint.email || '';
+                document.getElementById('address').value = complaint.address || '';
+                document.getElementById('pinCode').value = complaint.pinCode || '';
+                document.getElementById('category').value = complaint.category || '';
+                document.getElementById('purchaseDate').value = complaint.purchaseDate || '';
+                document.getElementById('underWarranty').value = complaint.underWarranty || '';
+                document.getElementById('brand').value = complaint.brand || '';
+                document.getElementById('itemSerialNumber').value = complaint.itemSerialNumber || '';
+                document.getElementById('numberOfProducts').value = complaint.numberOfProducts || 1;
+                document.getElementById('priority').value = complaint.priority || 'Low';
+                document.getElementById('agent').value = complaint.agentId || '';
+                document.getElementById('agentTelegramId').value = complaint.agentTelegramId || '';
+                document.getElementById('jobDate').value = complaint.jobDate || '';
+                document.getElementById('jobNumber').value = complaint.jobNumber || '';
+                document.getElementById('reason').value = complaint.reason || '';
+
+                // Store the document ID for update
+                document.getElementById('complaintForm').dataset.editId = docId;
+                
+                // Change button text
+                document.getElementById('submitBtn').textContent = 'Update Complaint';
+                
+                // Switch to form tab
+                switchTab('form');
+            } catch (error) {
+                console.error('Error loading complaint:', error);
+                showNotification('Error loading complaint details. Please try again.', 'error');
+            }
+        }
+
+        // Delete complaint
+        async function deleteComplaint(docId) {
+            if (!confirm('Are you sure you want to delete this complaint?')) {
+                return;
+            }
+
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+
+                await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('complaints')
+                    .collection('complaints-coll')
+                    .doc(docId)
+                    .delete();
+
+                showNotification('Complaint deleted successfully!');
+                loadComplaints(true);
+            } catch (error) {
+                console.error('Error deleting complaint:', error);
+                showNotification('Error deleting complaint. Please try again.', 'error');
+            }
+        }
+
+        // Load categories for dropdown
+        async function loadCategories() {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+                const categoriesSnapshot = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('categories')
+                    .where('status', '==', 'A')
+                    .get();
+
+                const categorySelect = document.getElementById('category');
+                const searchCategorySelect = document.getElementById('searchCategory');
+                
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
+                searchCategorySelect.innerHTML = '<option value="">All Categories</option>';
+
+                categoriesSnapshot.forEach(doc => {
+                    const category = doc.data();
+                    const option = document.createElement('option');
+                    option.value = category.categoryName;
+                    option.textContent = category.categoryName;
+                    categorySelect.appendChild(option);
+                    
+                    const searchOption = document.createElement('option');
+                    searchOption.value = category.categoryName;
+                    searchOption.textContent = category.categoryName;
+                    searchCategorySelect.appendChild(searchOption);
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load brands for dropdown
+        async function loadBrands() {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+                const brandsSnapshot = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('brands')
+                    .where('status', '==', 'A')
+                    .get();
+
+                const brandSelect = document.getElementById('brand');
+                const searchBrandSelect = document.getElementById('searchBrand');
+                
+                brandSelect.innerHTML = '<option value="">Select Brand</option>';
+                searchBrandSelect.innerHTML = '<option value="">All Brands</option>';
+
+                brandsSnapshot.forEach(doc => {
+                    const brand = doc.data();
+                    const option = document.createElement('option');
+                    option.value = brand.brandName;
+                    option.textContent = brand.brandName;
+                    brandSelect.appendChild(option);
+                    
+                    const searchOption = document.createElement('option');
+                    searchOption.value = brand.brandName;
+                    searchOption.textContent = brand.brandName;
+                    searchBrandSelect.appendChild(searchOption);
+                });
+            } catch (error) {
+                console.error('Error loading brands:', error);
+            }
+        }
+
+        // Load agents for dropdown
+        async function loadAgents() {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+                const agentsSnapshot = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('serviceagents')
+                    .where('status', '==', 'A')
+                    .get();
+
+                const agentSelect = document.getElementById('agent');
+                const searchAgentSelect = document.getElementById('searchAgent');
+                
+                agentSelect.innerHTML = '<option value="">Select Agent</option>';
+                searchAgentSelect.innerHTML = '<option value="">All Agents</option>';
+
+                agentsSnapshot.forEach(doc => {
+                    const agent = doc.data();
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = agent.agentName;
+                    option.dataset.telegramId = agent.agentTelegramId;
+                    agentSelect.appendChild(option);
+                    
+                    const searchOption = document.createElement('option');
+                    searchOption.value = doc.id;
+                    searchOption.textContent = agent.agentName;
+                    searchAgentSelect.appendChild(searchOption);
+                });
+            } catch (error) {
+                console.error('Error loading agents:', error);
+            }
+        }
+
+
+
+        // Generate job number
+        function generateJobNumber() {
+            const jobDate = document.getElementById('jobDate').value;
+            const brand = document.getElementById('brand').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            if (!jobDate || !brand || !phoneNumber) {
+                return '';
+            }
+
+            const date = new Date(jobDate);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = String(date.getFullYear()).slice(-2);
+            
+            const brandPrefix = brand.substring(0, 3).toUpperCase();
+            const phoneSuffix = phoneNumber.slice(-4);
+
+            return `${day}${month}${year}${brandPrefix}${phoneSuffix}`;
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Send Telegram notification
+        async function sendTelegramNotification(complaintData, isUpdate = false) {
+            try {
+                const action = isUpdate ? '🔄 UPDATED' : '🆕 NEW';
+                
+                // Debug: Log the complaint data to identify problematic content
+                console.log('Complaint Data for Telegram:', complaintData);
+                
+                // Escape special characters that break Markdown
+                const escapeMarkdown = (text) => {
+                    if (!text) return 'N/A';
+                    const originalText = text.toString();
+                    const escapedText = originalText
+                        .replace(/_/g, '\\_')
+                        .replace(/\*/g, '\\*')
+                        .replace(/\[/g, '\\[')
+                        .replace(/\]/g, '\\]')
+                        .replace(/\(/g, '\\(')
+                        .replace(/\)/g, '\\)')
+                        .replace(/~/g, '\\~')
+                        .replace(/`/g, '\\`')
+                        .replace(/>/g, '\\>')
+                        .replace(/#/g, '\\#')
+                        .replace(/\+/g, '\\+')
+                        .replace(/-/g, '\\-')
+                        .replace(/=/g, '\\=')
+                        .replace(/\|/g, '\\|')
+                        .replace(/\{/g, '\\{')
+                        .replace(/\}/g, '\\}')
+                        .replace(/\./g, '\\.')
+                        .replace(/!/g, '\\!');
+                    
+                    // Debug: Log if text was modified
+                    if (originalText !== escapedText) {
+                        console.log('Escaped text:', { original: originalText, escaped: escapedText });
+                    }
+                    
+                    return escapedText;
+                };
+
+                const message = `
+${action} COMPLAINT NOTIFICATION
+
+👤 *Customer Information*
+• Name: ${escapeMarkdown(complaintData.customerName)}
+• Phone: ${escapeMarkdown(complaintData.phoneNumber)}
+• Alternate: ${escapeMarkdown(complaintData.alternateNumber)}
+• Email: ${escapeMarkdown(complaintData.email)}
+• Address: ${escapeMarkdown(complaintData.address)}
+• Pin Code: ${escapeMarkdown(complaintData.pinCode)}
+
+🏢 *Dealer Details*
+• Dealer: ${escapeMarkdown(complaintData.dealer)}
+
+📅 *Complaint Details*
+• Complaint Date: ${escapeMarkdown(complaintData.complaintDate)}
+• Purchase Date: ${escapeMarkdown(complaintData.purchaseDate)}
+• Under Warranty: ${escapeMarkdown(complaintData.underWarranty)}
+
+📱 *Product Information*
+• Brand: ${escapeMarkdown(complaintData.brand)}
+• Category: ${escapeMarkdown(complaintData.category)}
+• Serial Number: ${escapeMarkdown(complaintData.itemSerialNumber)}
+• No. of Products: ${complaintData.numberOfProducts || 1}
+• Priority: ${complaintData.priority === 'High' ? '🔴 HIGH' : '🟡 LOW'}
+
+🔧 *Service Information*
+• Job Date: ${escapeMarkdown(complaintData.jobDate)}
+• Job Number: ${escapeMarkdown(complaintData.jobNumber)}
+• Agent Telegram ID: ${escapeMarkdown(complaintData.agentTelegramId)}
+
+📝 *Description*
+${escapeMarkdown(complaintData.description)}
+
+💭 *Reason*
+${escapeMarkdown(complaintData.reason)}
+
+⏰ *Timestamp*
+${new Date().toLocaleString('en-IN', { 
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+})}
+
+🏢 *Company Code*
+${escapeMarkdown(complaintData.companyCode)}
+                `.trim();
+
+                const encodedMessage = encodeURIComponent(message);
+                const telegramId = complaintData.agentTelegramId;
+                const telegramUrl = `https://api.telegram.org/bot1647627417:AAEJ_r5VnmbwSXw2NV6VSqeXt7PAqbBEvec/sendmessage?chat_id=${telegramId}&text=${encodedMessage}&parse_mode=Markdown`;
+                
+                // Log Telegram ID and API URL
+                console.log('Sending to Telegram ID:', telegramId);
+                console.log('Telegram API URL:', telegramUrl);
+
+                const response = await fetch(telegramUrl);
+                const result = await response.json();
+                
+                console.log('Telegram API Response:', result);
+                
+                if (result.ok) {
+                    console.log('Telegram notification sent successfully');
+                    showNotification(`Telegram notification sent successfully! (ID: ${telegramId})`);
+                } else {
+                    console.error('Failed to send Telegram notification with Markdown:', result);
+                    
+                    // If Markdown fails, try sending without Markdown formatting
+                    if (result.error_code === 400) {
+                        console.log('Trying to send without Markdown formatting...');
+                        
+                        // Create a plain text version without Markdown
+                        const plainMessage = `
+${action} COMPLAINT NOTIFICATION
+
+👤 Customer Information
+• Name: ${complaintData.customerName || 'N/A'}
+• Phone: ${complaintData.phoneNumber || 'N/A'}
+• Alternate: ${complaintData.alternateNumber || 'N/A'}
+• Email: ${complaintData.email || 'N/A'}
+• Address: ${complaintData.address || 'N/A'}
+• Pin Code: ${complaintData.pinCode || 'N/A'}
+
+🏢 Dealer Details
+• Dealer: ${complaintData.dealer || 'N/A'}
+
+📅 Complaint Details
+• Complaint Date: ${complaintData.complaintDate || 'N/A'}
+• Purchase Date: ${complaintData.purchaseDate || 'N/A'}
+• Under Warranty: ${complaintData.underWarranty || 'N/A'}
+
+📱 Product Information
+• Brand: ${complaintData.brand || 'N/A'}
+• Category: ${complaintData.category || 'N/A'}
+• Serial Number: ${complaintData.itemSerialNumber || 'N/A'}
+• No. of Products: ${complaintData.numberOfProducts || 1}
+• Priority: ${complaintData.priority === 'High' ? '🔴 HIGH' : '🟡 LOW'}
+
+🔧 Service Information
+• Job Date: ${complaintData.jobDate || 'N/A'}
+• Job Number: ${complaintData.jobNumber || 'N/A'}
+• Agent Telegram ID: ${complaintData.agentTelegramId || 'N/A'}
+
+📝 Description
+${complaintData.description || 'N/A'}
+
+💭 Reason
+${complaintData.reason || 'N/A'}
+
+⏰ Timestamp
+${new Date().toLocaleString('en-IN', { 
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+})}
+
+🏢 Company Code
+${complaintData.companyCode || 'N/A'}
+                        `.trim();
+
+                        const plainEncodedMessage = encodeURIComponent(plainMessage);
+                        const plainTelegramUrl = `https://api.telegram.org/bot1647627417:AAEJ_r5VnmbwSXw2NV6VSqeXt7PAqbBEvec/sendmessage?chat_id=${telegramId}&text=${plainEncodedMessage}`;
+                        
+                        // Log Telegram ID and API URL for plain text
+                        console.log('Sending to Telegram ID (plain):', telegramId);
+                        console.log('Telegram API URL (plain):', plainTelegramUrl);
+
+                        const plainResponse = await fetch(plainTelegramUrl);
+                        const plainResult = await plainResponse.json();
+                        
+                        console.log('Plain text Telegram API Response:', plainResult);
+                        
+                        if (plainResult.ok) {
+                            console.log('Telegram notification sent successfully (plain text)');
+                            showNotification(`Telegram notification sent successfully! (plain text, ID: ${telegramId})`);
+                        } else {
+                            console.error('Failed to send plain text Telegram notification:', plainResult);
+                            showNotification('Telegram notification failed even with plain text. Please check console for details.', 'error');
+                        }
+                    } else {
+                        let errorMessage = 'Telegram notification failed.';
+                        if (result.error_code === 401) {
+                            errorMessage += ' Unauthorized - check bot token.';
+                        } else if (result.error_code === 403) {
+                            errorMessage += ' Forbidden - check chat ID.';
+                        } else if (result.error_code === 429) {
+                            errorMessage += ' Rate limited - too many requests.';
+                        }
+                        showNotification(errorMessage, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error sending Telegram notification:', error);
+                showNotification('Error sending Telegram notification. Please try again.', 'error');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('agent').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const telegramId = selectedOption.dataset.telegramId || '';
+            document.getElementById('agentTelegramId').value = telegramId;
+        });
+
+        document.getElementById('jobDate').addEventListener('change', function() {
+            const jobNumber = generateJobNumber();
+            document.getElementById('jobNumber').value = jobNumber;
+        });
+
+        document.getElementById('brand').addEventListener('change', function() {
+            const jobNumber = generateJobNumber();
+            document.getElementById('jobNumber').value = jobNumber;
+        });
+
+        document.getElementById('phoneNumber').addEventListener('input', function() {
+            const jobNumber = generateJobNumber();
+            document.getElementById('jobNumber').value = jobNumber;
+        });
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('complaintForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('complaintDate').value = today;
+            document.getElementById('jobDate').value = today;
+            document.getElementById('priority').value = 'Low';
+            document.getElementById('numberOfProducts').value = 1;
+            document.getElementById('agentTelegramId').value = '';
+            document.getElementById('jobNumber').value = '';
+            
+            // Reset button text and remove edit ID
+            document.getElementById('submitBtn').textContent = 'Submit Complaint';
+            delete document.getElementById('complaintForm').dataset.editId;
+        }
+
+        // Download Excel data function
+        async function downloadExcelData() {
+            // Check if XLSX library is loaded
+            if (typeof XLSX === 'undefined') {
+                showNotification('Excel library not loaded. Please refresh the page and try again.', 'error');
+                return;
+            }
+
+            const downloadBtn = document.getElementById('downloadExcelBtn');
+            const originalText = downloadBtn.textContent;
+            
+            try {
+                // Show loading state
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = '⏳ Loading...';
+                
+                const companyCode = localStorage.getItem('companyCode');
+                
+                // Build query based on current filters
+                let query = db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('complaints')
+                    .collection('complaints-coll')
+                    .where('companyCode', '==', companyCode);
+
+                // Apply status filter first (required for Firestore)
+                if (currentFilters.status) {
+                    query = query.where('status', '==', currentFilters.status);
+                }
+
+                // Apply phone number filter if provided
+                if (currentFilters.phoneNumber) {
+                    query = query.where('phoneNumber', '>=', currentFilters.phoneNumber)
+                               .where('phoneNumber', '<=', currentFilters.phoneNumber + '\uf8ff');
+                }
+
+                // Apply brand filter if provided
+                if (currentFilters.brand) {
+                    query = query.where('brand', '==', currentFilters.brand);
+                }
+
+                // Apply category filter if provided
+                if (currentFilters.category) {
+                    query = query.where('category', '==', currentFilters.category);
+                }
+
+                // Apply agent filter if provided
+                if (currentFilters.agent) {
+                    query = query.where('agentId', '==', currentFilters.agent);
+                }
+
+                // Apply month filter if provided
+                if (currentFilters.month) {
+                    const currentYear = new Date().getFullYear();
+                    const startDate = `${currentYear}-${currentFilters.month}-01`;
+                    const endDate = `${currentYear}-${currentFilters.month}-31`;
+                    query = query.where('complaintDate', '>=', startDate)
+                               .where('complaintDate', '<=', endDate);
+                }
+
+                // Get all data (no pagination for Excel download)
+                const snapshot = await query.orderBy('createdAt', 'desc').get();
+                
+                if (snapshot.empty) {
+                    showNotification('No data found for the selected filters.', 'error');
+                    return;
+                }
+
+                console.log(`Found ${snapshot.size} records for Excel download`);
+
+                // Prepare data for Excel
+                const excelData = [];
+                const headers = [
+                    'Customer Name', 'Phone Number', 'Alternate Number', 'Email', 'Address', 'Pin Code',
+                    'Dealer', 'Complaint Date', 'Description', 'Category', 'Purchase Date', 'Under Warranty',
+                    'Brand', 'Item Serial Number', 'No. of Products', 'Priority', 'Agent', 'Job Date', 'Job Number', 'Reason', 'Status'
+                ];
+                excelData.push(headers);
+
+                // Get agent names mapping
+                const agentNames = {};
+                const agentsSnapshot = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('serviceagents')
+                    .where('status', '==', 'A')
+                    .get();
+                
+                agentsSnapshot.forEach(doc => {
+                    agentNames[doc.id] = doc.data().agentName;
+                });
+
+                snapshot.forEach(doc => {
+                    const complaint = doc.data();
+                    const row = [
+                        complaint.customerName || '',
+                        complaint.phoneNumber || '',
+                        complaint.alternateNumber || '',
+                        complaint.email || '',
+                        complaint.address || '',
+                        complaint.pinCode || '',
+                        complaint.dealer || '',
+                        complaint.complaintDate || '',
+                        complaint.description || '',
+                        complaint.category || '',
+                        complaint.purchaseDate || '',
+                        complaint.underWarranty || '',
+                        complaint.brand || '',
+                        complaint.itemSerialNumber || '',
+                        complaint.numberOfProducts || 1,
+                        complaint.priority || 'Low',
+                        agentNames[complaint.agentId] || '',
+                        complaint.jobDate || '',
+                        complaint.jobNumber || '',
+                        complaint.reason || '',
+                        complaint.status || 'Open'
+                    ];
+                    excelData.push(row);
+                });
+
+                // Generate Excel file
+                const worksheet = XLSX.utils.aoa_to_sheet(excelData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Complaints');
+
+                // Auto-size columns
+                const columnWidths = headers.map(header => ({ wch: Math.max(header.length, 15) }));
+                worksheet['!cols'] = columnWidths;
+
+                // Generate filename based on filters
+                let filename = 'complaints';
+                const activeFilters = [];
+                if (currentFilters.category) activeFilters.push(currentFilters.category);
+                if (currentFilters.agent) activeFilters.push(agentNames[currentFilters.agent] || currentFilters.agent);
+                if (currentFilters.month) {
+                    const monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June', 
+                                      'July', 'August', 'September', 'October', 'November', 'December'];
+                    activeFilters.push(monthNames[parseInt(currentFilters.month)]);
+                }
+                if (currentFilters.status && currentFilters.status !== 'Open') activeFilters.push(currentFilters.status);
+                
+                if (activeFilters.length > 0) {
+                    filename += `_${activeFilters.join('_')}`;
+                }
+                filename += `_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+                // Download the file
+                XLSX.writeFile(workbook, filename);
+                showNotification(`Excel file downloaded successfully! (${snapshot.size} records)`);
+
+            } catch (error) {
+                console.error('Error downloading Excel:', error);
+                showNotification('Error downloading Excel file. Please try again.', 'error');
+            } finally {
+                // Reset button state
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = originalText;
+            }
+        }
+
+        // Form submission
+        document.getElementById('complaintForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const companyCode = localStorage.getItem('companyCode');
+            const userId = localStorage.getItem('userId');
+
+            const complaintData = {
+                customerName: document.getElementById('customerName').value,
+                complaintDate: document.getElementById('complaintDate').value,
+                description: document.getElementById('description').value,
+                dealer: document.getElementById('dealer').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                alternateNumber: document.getElementById('alternateNumber').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                pinCode: document.getElementById('pinCode').value,
+                category: document.getElementById('category').value,
+                purchaseDate: document.getElementById('purchaseDate').value,
+                underWarranty: document.getElementById('underWarranty').value,
+                brand: document.getElementById('brand').value,
+                itemSerialNumber: document.getElementById('itemSerialNumber').value,
+                numberOfProducts: parseInt(document.getElementById('numberOfProducts').value) || 1,
+                priority: document.getElementById('priority').value,
+                agentId: document.getElementById('agent').value,
+                agentTelegramId: document.getElementById('agentTelegramId').value,
+                jobDate: document.getElementById('jobDate').value,
+                jobNumber: document.getElementById('jobNumber').value,
+                reason: document.getElementById('reason').value,
+                companyCode: companyCode,
+                updatedAt: new Date()
+            };
+
+            try {
+                const editId = this.dataset.editId;
+                if (editId) {
+                    // Update existing complaint
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(companyCode)
+                        .doc('complaints')
+                        .collection('complaints-coll')
+                        .doc(editId)
+                        .update(complaintData);
+                    showNotification('Complaint updated successfully!');
+                    
+                    // Send Telegram notification for update
+                    await sendTelegramNotification(complaintData, true);
+                } else {
+                    // Create new complaint
+                    complaintData.createdBy = userId;
+                    complaintData.createdAt = new Date();
+                    complaintData.status = 'Open';
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(companyCode)
+                        .doc('complaints')
+                        .collection('complaints-coll')
+                        .add(complaintData);
+                    showNotification('Complaint submitted successfully!');
+                    
+                    // Send Telegram notification for new complaint
+                    await sendTelegramNotification(complaintData, false);
+                }
+
+                resetForm();
+                if (editId) {
+                    loadComplaints(true); // Refresh the list if editing
+                }
+            } catch (error) {
+                console.error('Error submitting complaint:', error);
+                showNotification('Error submitting complaint. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html> 

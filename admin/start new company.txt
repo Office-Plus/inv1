@@ -1,0 +1,4 @@
+1. added company code in paezr.com/face
+2. registered with userid
+3. generated descriptiors
+------ now going app side-----------

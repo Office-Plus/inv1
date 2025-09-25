@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brands Master</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            background: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .delete-btn {
+            color: #f44336;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            padding-right: 32px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .search-result-item {
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: #f5f5f5;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: #666;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2196F3;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2196F3;
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-filters input,
+        .search-filters select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .no-more {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(76, 175, 80, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(244, 67, 54, 0.9);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        .notification .timer {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+        }
+
+        .notification .timer-bar {
+            height: 100%;
+            background: white;
+            width: 100%;
+            transition: width 3s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <div class="container">
+        <h1>Brands Master</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('form')">Add/Edit Brand</button>
+            <button class="tab" onclick="switchTab('list')">Brand List</button>
+        </div>
+
+        <div id="formTab" class="tab-content">
+            <div class="form-container">
+                <form id="brandForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="brandName">Brand Name</label>
+                            <input type="text" id="brandName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyCode">Company Code</label>
+                            <input type="text" id="companyCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select id="status" required>
+                                <option value="">Select Status</option>
+                                <option value="A">Active (A)</option>
+                                <option value="F">Inactive (F)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Brand</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="listTab" class="tab-content" style="display: none;">
+            <div class="search-filters">
+                <input type="text" id="searchName" placeholder="Search by brand name...">
+                <input type="text" id="searchCompanyCode" placeholder="Search by company code...">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Brand Name</th>
+                        <th>Company Code</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="brandTable"></tbody>
+            </table>
+            <div id="loading" class="loading" style="display: none;">Loading more brands...</div>
+            <div id="noMore" class="no-more">No more brands to load</div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage"></span>
+        <div class="timer">
+            <div class="timer-bar"></div>
+        </div>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Load the menu
+        fetch('menu.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('menuContainer').innerHTML = html;
+            });
+
+        // Load brands when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            
+            if (!userEmail || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Set welcome message
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+            
+            // Load brands
+            loadBrands();
+            prefillCompanyCode();
+        });
+
+        // Function to prefill Company Code
+        function prefillCompanyCode() {
+            try {
+                const companyCode = localStorage.getItem('companyCode');
+                if (companyCode) {
+                    document.getElementById('companyCode').value = companyCode;
+                }
+            } catch (error) {
+                console.error('Error prefilling Company Code:', error);
+            }
+        }
+
+        let lastVisible = null;
+        let isLoading = false;
+        let hasMore = true;
+        const pageSize = 50;
+        let currentFilters = {
+            name: '',
+            companyCode: ''
+        };
+
+        // Switch tabs
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            document.getElementById(tab + 'Tab').style.display = 'block';
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            if (tab === 'list') {
+                loadBrands();
+            }
+        }
+
+        // Load brands with pagination and filters
+        async function loadBrands(reset = false) {
+            if (isLoading || (!hasMore && !reset)) return;
+            
+            try {
+                isLoading = true;
+                document.getElementById('loading').style.display = 'block';
+                
+                const userEmail = localStorage.getItem('userEmail');
+                const userId = localStorage.getItem('userId');
+                const companyCode = localStorage.getItem('companyCode');
+
+                let query = db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('brands');
+
+                // Apply filters
+                if (currentFilters.name) {
+                    query = query.where('brandName', '>=', currentFilters.name)
+                               .where('brandName', '<=', currentFilters.name + '\uf8ff');
+                }
+                if (currentFilters.companyCode) {
+                    query = query.where('companyCode', '>=', currentFilters.companyCode)
+                               .where('companyCode', '<=', currentFilters.companyCode + '\uf8ff');
+                }
+
+                // Add ordering and pagination
+                query = query.orderBy('createdAt', 'desc').limit(pageSize);
+
+                if (!reset && lastVisible) {
+                    query = query.startAfter(lastVisible);
+                }
+
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    hasMore = false;
+                    document.getElementById('noMore').style.display = 'block';
+                    return;
+                }
+
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                const tbody = document.getElementById('brandTable');
+                
+                if (reset) {
+                    tbody.innerHTML = '';
+                }
+
+                snapshot.forEach(doc => {
+                    const brand = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${brand.brandName}</td>
+                        <td>${brand.companyCode}</td>
+                        <td>${brand.status}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editBrand('${doc.id}')">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deleteBrand('${doc.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading brands:', error);
+            } finally {
+                isLoading = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Search and filter functionality
+        document.getElementById('searchName').addEventListener('input', debounce(function() {
+            currentFilters.name = this.value.toLowerCase();
+            hasMore = true;
+            lastVisible = null;
+            loadBrands(true);
+        }, 500));
+
+        document.getElementById('searchCompanyCode').addEventListener('input', debounce(function() {
+            currentFilters.companyCode = this.value.toLowerCase();
+            hasMore = true;
+            lastVisible = null;
+            loadBrands(true);
+        }, 500));
+
+        // Debounce function to limit API calls
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func.apply(this, args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Infinite scroll
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
+                loadBrands();
+            }
+        });
+
+        // Edit brand
+        async function editBrand(docId) {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userId = localStorage.getItem('userId');
+                const companyCode = localStorage.getItem('companyCode');
+
+                const doc = await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('brands')
+                    .doc(docId)
+                    .get();
+
+                const brand = doc.data();
+                
+                document.getElementById('brandName').value = brand.brandName;
+                document.getElementById('companyCode').value = brand.companyCode;
+                document.getElementById('status').value = brand.status;
+
+                // Store the document ID for update
+                document.getElementById('brandForm').dataset.editId = docId;
+                
+                // Switch to form tab
+                switchTab('form');
+            } catch (error) {
+                console.error('Error loading brand:', error);
+                alert('Error loading brand details. Please try again.');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            const timerBar = notification.querySelector('.timer-bar');
+            
+            notification.className = `notification ${type}`;
+            messageEl.textContent = message;
+            
+            // Reset timer bar
+            timerBar.style.width = '100%';
+            
+            // Show notification
+            notification.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update form submission to handle both create and update
+        document.getElementById('brandForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userEmail = localStorage.getItem('userEmail');
+            const userId = localStorage.getItem('userId');
+            const companyCode = localStorage.getItem('companyCode');
+
+            const brandData = {
+                brandName: document.getElementById('brandName').value,
+                companyCode: document.getElementById('companyCode').value,
+                status: document.getElementById('status').value,
+                updatedAt: new Date()
+            };
+
+            try {
+                const editId = this.dataset.editId;
+                if (editId) {
+                    // Update existing brand
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(companyCode)
+                        .doc('masters')
+                        .collection('brands')
+                        .doc(editId)
+                        .update(brandData);
+                    showNotification('Brand updated successfully!');
+                } else {
+                    // Create new brand
+                    brandData.createdAt = new Date();
+                    await db.collection('complaints')
+                        .doc('cmplts')
+                        .collection(companyCode)
+                        .doc('masters')
+                        .collection('brands')
+                        .add(brandData);
+                    showNotification('Brand added successfully!');
+                }
+
+                this.reset();
+                delete this.dataset.editId;
+                loadBrands(true); // Reset the list
+            } catch (error) {
+                console.error('Error saving brand:', error);
+                showNotification('Error saving brand. Please try again.', 'error');
+            }
+        });
+
+        // Function to delete a brand
+        async function deleteBrand(docId) {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userId = localStorage.getItem('userId');
+                const companyCode = localStorage.getItem('companyCode');
+
+                await db.collection('complaints')
+                    .doc('cmplts')
+                    .collection(companyCode)
+                    .doc('masters')
+                    .collection('brands')
+                    .doc(docId)
+                    .delete();
+
+                showNotification('Brand deleted successfully!', 'success');
+                loadBrands(true);
+            } catch (error) {
+                console.error('Error deleting brand:', error);
+                showNotification('Error deleting brand. Please try again.', 'error');
+            }
+        }
+    </script>
+</body>
+</html> 

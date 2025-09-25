@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department Master</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2196F3;
+        }
+
+        .welcome-message {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 70px auto 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .btn.update {
+            background-color: #2196F3;
+        }
+
+        .btn.update:hover {
+            background-color: #1976D2;
+        }
+
+        .btn.delete {
+            background-color: #f44336;
+        }
+
+        .btn.delete:hover {
+            background-color: #d32f2f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .version {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="welcome-message" id="welcomeMessage"></div>
+    </div>
+
+    <!-- Include the shared menu -->
+    <div id="menuContainer"></div>
+
+    <div class="container">
+        <div class="card">
+            <h1>Department Master</h1>
+            <form id="departmentForm">
+                <div class="form-group">
+                    <label for="departmentName">Department Name</label>
+                    <input type="text" id="departmentName" required>
+                </div>
+                <button type="submit" class="btn" id="submitBtn">Save</button>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Department Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="departmentList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="version">(Version 0.0.4)</div>
+
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+    <script src="menu.js"></script>
+    <script src="universal-menu-init.js"></script>
+    <script>
+        // Load the menu
+        fetch('menu.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('menuContainer').innerHTML = html;
+            });
+
+        // Check authentication
+        const userId = localStorage.getItem('userId');
+        
+        if (!userEmail || !userId) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('welcomeMessage').textContent = `Welcome, ${userEmail}`;
+        }
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvTaQfcJsj7nGSOQxEdLjCbCenmDEC3Ns",
+            authDomain: "lovable-9c76e.firebaseapp.com",
+            projectId: "lovable-9c76e",
+            storageBucket: "lovable-9c76e.firebasestorage.app",
+            messagingSenderId: "670985612758",
+            appId: "1:670985612758:web:67928f8e0328d54c640877",
+            measurementId: "G-Q4X9B5HPJP"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let currentDepartmentId = null;
+        let companyCode = null;
+
+        // Load company code
+        db.collection('users').doc(userId).get()
+            .then(doc => {
+                if (doc.exists && doc.data().companyCode) {
+                    companyCode = doc.data().companyCode;
+                    loadDepartments();
+                } else {
+                    alert('Please set your company code in Settings first.');
+                    window.location.href = 'settings.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading company code:', error);
+                alert('Error loading company code. Please try again.');
+            });
+
+        // Load departments
+        function loadDepartments() {
+            const departmentList = document.getElementById('departmentList');
+            departmentList.innerHTML = '';
+
+            db.collection('attendance')
+                .doc('att')
+                .collection(companyCode)
+                .doc('masters')
+                .collection('dept')
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${data.name}</td>
+                            <td class="action-buttons">
+                                <button class="btn update" onclick="editDepartment('${doc.id}', '${data.name}')">Edit</button>
+                                <button class="btn delete" onclick="deleteDepartment('${doc.id}')">Delete</button>
+                            </td>
+                        `;
+                        departmentList.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading departments:', error);
+                    alert('Error loading departments. Please try again.');
+                });
+        }
+
+        // Handle form submission
+        document.getElementById('departmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const departmentName = document.getElementById('departmentName').value;
+
+            try {
+                if (currentDepartmentId) {
+                    // Update existing department
+                    await db.collection('attendance')
+                        .doc('att')
+                        .collection(companyCode)
+                        .doc('masters')
+                        .collection('dept')
+                        .doc(currentDepartmentId)
+                        .update({
+                            name: departmentName,
+                            updatedAt: new Date()
+                        });
+                } else {
+                    // Create new department
+                    await db.collection('attendance')
+                        .doc('att')
+                        .collection(companyCode)
+                        .doc('masters')
+                        .collection('dept')
+                        .add({
+                            name: departmentName,
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        });
+                }
+
+                // Reset form and reload departments
+                document.getElementById('departmentForm').reset();
+                currentDepartmentId = null;
+                document.getElementById('submitBtn').textContent = 'Save';
+                document.getElementById('submitBtn').classList.remove('update');
+                loadDepartments();
+                alert('Department saved successfully!');
+            } catch (error) {
+                console.error('Error saving department:', error);
+                alert('Error saving department. Please try again.');
+            }
+        });
+
+        // Edit department
+        window.editDepartment = function(id, name) {
+            currentDepartmentId = id;
+            document.getElementById('departmentName').value = name;
+            document.getElementById('submitBtn').textContent = 'Update';
+            document.getElementById('submitBtn').classList.add('update');
+        }
+
+        // Delete department
+        window.deleteDepartment = async function(id) {
+            if (confirm('Are you sure you want to delete this department?')) {
+                try {
+                    await db.collection('attendance')
+                        .doc('att')
+                        .collection(companyCode)
+                        .doc('masters')
+                        .collection('dept')
+                        .doc(id)
+                        .delete();
+                    loadDepartments();
+                    alert('Department deleted successfully!');
+                } catch (error) {
+                    console.error('Error deleting department:', error);
+                    alert('Error deleting department. Please try again.');
+                }
+            }
+        }
+
+        // Add logout function
+        window.logout = function() {
+            const auth = firebase.auth();
+            auth.signOut().then(() => {
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userId');
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Error signing out:', error);
+            });
+        }
+    </script>
+</body>
+</html> 
